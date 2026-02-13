@@ -1,6 +1,6 @@
 package com.br.stockpro.enums;
 
-public enum UnidadeMedida {
+public enum UnitOfMeasure {
 
     UNIDADE("Unidade"),
     KG("Quilograma"),
@@ -12,7 +12,7 @@ public enum UnidadeMedida {
 
     private final String descricao;
 
-    UnidadeMedida(String descricao) {
+    UnitOfMeasure(String descricao) {
         this.descricao = descricao;
     }
 
