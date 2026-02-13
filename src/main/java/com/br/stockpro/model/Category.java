@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
-@Table(name = "categorias")
+@Table(name = "categories")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,5 +19,5 @@ public class Category extends Auditable {
 
     @NotBlank
     @Column(nullable = false)
-    private String nome;
+    private String name;
 }

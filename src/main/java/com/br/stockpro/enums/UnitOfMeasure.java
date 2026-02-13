@@ -2,21 +2,21 @@ package com.br.stockpro.enums;
 
 public enum UnitOfMeasure {
 
-    UNIDADE("Unidade"),
-    KG("Quilograma"),
-    G("Grama"),
-    L("Litro"),
-    ML("Mililitro"),
-    CX("Caixa"),
-    PCT("Pacote");
+    UNIDADE("Unit"),
+    KG("Kilogram"),
+    G("Gram"),
+    L("Liter"),
+    ML("Milliliter"),
+    BX("Box"),
+    PKG("Package");
 
-    private final String descricao;
+    private final String description;
 
-    UnitOfMeasure(String descricao) {
-        this.descricao = descricao;
+    UnitOfMeasure(String description) {
+        this.description = description;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 }
