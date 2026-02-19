@@ -14,7 +14,17 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(
-        name = "products"
+        name = "product",
+
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"company_id", "barcode"}
+                )
+        },
+        indexes = {
+                @Index(name = "idx_product_company", columnList = "company_id"),
+                @Index(name = "idx_product_category", columnList = "category_id")
+        }
 )
 @NoArgsConstructor
 @AllArgsConstructor
