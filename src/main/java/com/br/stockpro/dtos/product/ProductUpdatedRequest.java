@@ -36,6 +36,6 @@ public record ProductUpdatedRequest(
         BigDecimal salePrice,
 
         @NotNull
-        Long companyId
+        Long categoryId
 ) {
 }
