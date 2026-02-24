@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -88,11 +90,20 @@ public class ProductService {
         return productMapper.toResponseDTO(product);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductResponse> findAll() {
+
+        return productRepository.findAllByActiveTrue()
+                .stream()
+                .map(productMapper::toResponseDTO)
+                .toList();
+    }
+
     @Transactional
     public void delete(Long productId, Long companyId) {
 
         Product product = productRepository
-                .findByIdAndCompanyIdAndAtivoTrue(productId, companyId)
+                .findByIdAndCompanyIdAndActiveTrue(productId, companyId)
                 .orElseThrow(() -> new BusinessException("Produto não encontrado"));
 
         product.setActive(false);
