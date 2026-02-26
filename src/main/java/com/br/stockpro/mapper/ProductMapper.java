@@ -23,7 +23,7 @@ public interface ProductMapper {
     void updateEntityFromDTO(ProductUpdatedRequest dto, @MappingTarget Product entity);
 
     @Mapping(target = "companyId", source = "company.id")
-    @Mapping(target = "companyName", source = "company.name")
+    @Mapping(target = "companyLegalName", source = "company.legalName")
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "categoryName", source = "category.name")
     ProductResponse toResponseDTO(Product product);

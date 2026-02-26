@@ -18,7 +18,7 @@ public record ProductResponse(
         BigDecimal salePrice,
 
         Long companyId,
-        String companyName,
+        String companyLegalName,
 
         Long categoryId,
         String categoryName,
