@@ -7,8 +7,8 @@ public enum UnitOfMeasure {
     G("Gram"),
     L("Liter"),
     ML("Milliliter"),
-    BX("Box"),
-    PKG("Package");
+    CX("Box"),
+    PCT("Package");
 
     private final String description;
 
