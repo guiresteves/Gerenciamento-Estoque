@@ -11,7 +11,13 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "companies")
+@Table(
+        name = "companies",
+        indexes = {
+                @Index(name = "idx_company_cnpj", columnList = "cnpj")
+        }
+
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
