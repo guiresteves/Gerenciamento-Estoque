@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(
-        name = "product",
+        name = "products",
 
         uniqueConstraints = {
                 @UniqueConstraint(
