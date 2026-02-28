@@ -1,6 +1,5 @@
 package com.br.stockpro.model;
 
-import com.br.stockpro.enums.CompanyStatus;
 import com.br.stockpro.enums.CompanyType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -53,9 +52,4 @@ public class Company extends Auditable {
     @Email
     @NotBlank
     private String email;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CompanyStatus status;
 }

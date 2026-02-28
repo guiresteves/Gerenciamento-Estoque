@@ -1,6 +1,5 @@
 package com.br.stockpro.dtos.company;
 
-import com.br.stockpro.enums.CompanyStatus;
 import com.br.stockpro.enums.CompanyType;
 import jakarta.validation.constraints.*;
 
@@ -15,13 +14,13 @@ public record CompanyCreateRequest(
         String tradeName,
 
         @NotBlank
-        @Pattern(regexp = "//d{14}")
+        @Pattern(regexp = "\\d{14}", message = "CNPJ deve conter 14 dígitos numéricos")
         String cnpj,
 
-        @Size(min = 3, max = 50)
+        @Size(max = 50)
         String stateRegistration,
 
-        @Size(min = 3, max = 50)
+        @Size(max = 50)
         String municipalRegistration,
 
         @NotNull
@@ -33,9 +32,6 @@ public record CompanyCreateRequest(
 
         @Email
         @NotBlank
-        String email,
-
-        @NotNull
-        CompanyStatus companyStatus
+        String email
 ) {
 }

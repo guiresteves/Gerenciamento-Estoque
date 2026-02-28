@@ -1,6 +1,5 @@
 package com.br.stockpro.dtos.company;
 
-import com.br.stockpro.enums.CompanyStatus;
 import com.br.stockpro.enums.CompanyType;
 
 import java.time.Instant;
@@ -17,8 +16,6 @@ public record CompanyResponse(
 
         String phone,
         String email,
-
-        CompanyStatus companyStatus,
 
         Instant createdAt,
         Instant updatedAt

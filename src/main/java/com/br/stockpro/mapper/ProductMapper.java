@@ -26,7 +26,7 @@ public interface ProductMapper {
     @Mapping(target = "companyLegalName", source = "company.legalName")
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "categoryName", source = "category.name")
-    ProductResponse toResponseDTO(Product product);
+    ProductResponse toResponse(Product product);
 
     default Company mapCompany(Long companyId) {
         if (companyId == null) return null;

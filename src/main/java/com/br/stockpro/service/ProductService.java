@@ -53,7 +53,7 @@ public class ProductService {
 
         Product saved = productRepository.save(product);
 
-        return productMapper.toResponseDTO(saved);
+        return productMapper.toResponse(saved);
     }
 
     @Transactional
@@ -78,7 +78,7 @@ public class ProductService {
 
         Product updated = productRepository.save(product);
 
-        return productMapper.toResponseDTO(updated);
+        return productMapper.toResponse(updated);
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +87,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Produto não encontrado"));
 
-        return productMapper.toResponseDTO(product);
+        return productMapper.toResponse(product);
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +95,7 @@ public class ProductService {
 
         return productRepository.findAllByActiveTrue()
                 .stream()
-                .map(productMapper::toResponseDTO)
+                .map(productMapper::toResponse)
                 .toList();
     }
 

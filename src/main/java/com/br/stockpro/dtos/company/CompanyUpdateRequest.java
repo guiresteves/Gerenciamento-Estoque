@@ -1,6 +1,5 @@
 package com.br.stockpro.dtos.company;
 
-import com.br.stockpro.enums.CompanyStatus;
 import com.br.stockpro.enums.CompanyType;
 import jakarta.validation.constraints.*;
 
@@ -29,9 +28,6 @@ public record CompanyUpdateRequest(
 
         @Email
         @NotBlank
-        String email,
-
-        @NotNull
-        CompanyStatus companyStatus
+        String email
 ) {
 }

@@ -10,7 +10,6 @@ import org.mapstruct.*;
 public interface CompanyMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", ignore = true)
     Company toEntity(CompanyCreateRequest dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -19,5 +18,5 @@ public interface CompanyMapper {
             @MappingTarget Company entity
     );
 
-    CompanyResponse toResponseDTO(Company company);
+    CompanyResponse toResponse(Company company);
 }
