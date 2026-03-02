@@ -2,6 +2,7 @@ package com.br.stockpro.model;
 
 import com.br.stockpro.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -26,8 +27,16 @@ public class User {
     private String name;
 
     @NotBlank
+    @Email
+    @Column(nullable = false)
+    private String email;
+
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String password;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
     @NotNull
     @Column(nullable = false)
