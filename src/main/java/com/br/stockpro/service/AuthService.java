@@ -4,6 +4,7 @@ import com.br.stockpro.dtos.auth.AuthResponse;
 import com.br.stockpro.dtos.auth.LoginRequest;
 import com.br.stockpro.dtos.auth.RegisterRequest;
 import com.br.stockpro.enums.Role;
+import com.br.stockpro.exceptions.BusinessException;
 import com.br.stockpro.mapper.UserMapper;
 import com.br.stockpro.model.User;
 import com.br.stockpro.repository.UserRepository;
@@ -23,7 +24,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
-            throw  new RuntimeException("Email já cadastrado");
+            throw new BusinessException("Email já cadastrado");
         }
 
         User user = userMapper.toEntity(request);
@@ -32,23 +33,23 @@ public class AuthService {
         user.setActive(true);
         user.setRole(Role.ADMIN);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(savedUser);
 
         return new AuthResponse(token);
     }
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("Credenciais Inválidas"));
+                .orElseThrow(() -> new BusinessException("Credenciais inválidas"));
 
-        if (!user.getActive()){
-            throw  new RuntimeException("Usuario Inatívo");
+        if (!user.getActive()) {
+            throw new BusinessException("Usuário inativo");
         }
 
-        if (!passwordEncoder.matches(request.password(), user.getPassword())){
-            throw new RuntimeException("Crendicial Inválida");
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new BusinessException("Credenciais inválidas");
         }
 
         String token = jwtService.generateToken(user);
