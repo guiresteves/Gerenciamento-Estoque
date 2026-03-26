@@ -10,9 +10,13 @@ import org.mapstruct.*;
 public interface CompanyMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Company toEntity(CompanyCreateRequest dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "cnpj", ignore = true)
     void updateEntityFromDTO(
             CompanyUpdateRequest dto,
             @MappingTarget Company entity
