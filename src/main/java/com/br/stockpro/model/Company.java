@@ -26,30 +26,36 @@ public class Company extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 250)
     private String legalName;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 250)
     private String tradeName;
 
     @NotBlank
     @Column(nullable = false, unique = true, length = 18)
     private String cnpj;
 
+    @Column(length = 50)
     private String stateRegistration;
+
+    @Column(length = 50)
     private String municipalRegistration;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private CompanyType companyType;
 
-    @NotBlank
+    @Column(nullable = false, length = 20)
     private String phone;
 
-    @Email
-    @NotBlank
+    @Column(nullable = false, length = 150)
     private String email;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    @OneToOne(mappedBy = "companny")
+    private Company company;
 }
