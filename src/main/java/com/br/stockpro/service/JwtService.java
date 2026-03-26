@@ -41,22 +41,30 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    public Long extractCompanyId(String token) {
+        return extractClaim(token, claims -> claims.get("companyId", Long.class));
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         final Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
     }
 
-    public boolean isTokenValid(String token, User user) {
+    public boolean isTokenValid(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(user.getEmail()) && !isTokenExpired(token));
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
     private Claims extractAllClaims(String token) {
