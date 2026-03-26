@@ -34,10 +34,9 @@ public class AuthService {
         user.setRole(Role.ADMIN);
 
         User savedUser = userRepository.save(user);
-
         String token = jwtService.generateToken(savedUser);
 
-        return new AuthResponse(token);
+        return buildAuthResponse(savedUser, token);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -54,6 +53,18 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        return new AuthResponse(token);
+        return buildAuthResponse(user, token);
+    }
+
+    private AuthResponse buildAuthResponse(User user, String token) {
+        return new AuthResponse(
+                token,
+                "Bearer",
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.getCompany() != null ? user.getCompany().getId() : null
+        );
     }
 }
