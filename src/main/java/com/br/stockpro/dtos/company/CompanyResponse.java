@@ -17,6 +17,8 @@ public record CompanyResponse(
         String phone,
         String email,
 
+        Boolean active,
+
         Instant createdAt,
         Instant updatedAt
 ) {
