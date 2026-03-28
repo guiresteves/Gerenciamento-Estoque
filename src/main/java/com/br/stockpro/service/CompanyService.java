@@ -27,7 +27,7 @@ public class CompanyService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CompanyResponse createMyCompany(CompanyCreateRequest request) {
+    public CompanyResponse createCompany(CompanyCreateRequest request) {
 
         User currentUser = authenticatedUserService.getCurrentUser();
 
@@ -49,7 +49,7 @@ public class CompanyService {
     }
 
     @Transactional(readOnly = true)
-    public CompanyResponse getMyCompany() {
+    public CompanyResponse getCompany() {
 
         User currentUser = authenticatedUserService.getCurrentUser();
 
@@ -64,7 +64,7 @@ public class CompanyService {
     }
 
     @Transactional
-    public CompanyResponse updateMyCompany(CompanyUpdateRequest request) {
+    public CompanyResponse updateCompany(CompanyUpdateRequest request) {
 
         User currentUser = authenticatedUserService.getCurrentUser();
 

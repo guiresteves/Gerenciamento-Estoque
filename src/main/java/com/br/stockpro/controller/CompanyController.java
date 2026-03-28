@@ -22,19 +22,19 @@ public class CompanyController {
             @RequestBody @Valid CompanyCreateRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                companyService.createMyCompany(request)
+                companyService.createCompany(request)
         );
     }
 
     @GetMapping("/me")
     public ResponseEntity<CompanyResponse> getMyCompany() {
-        return ResponseEntity.ok(companyService.getMyCompany());
+        return ResponseEntity.ok(companyService.getCompany());
     }
 
     @PatchMapping("/me")
     public ResponseEntity<CompanyResponse> updateMyCompany(
             @RequestBody @Valid CompanyUpdateRequest request
     ) {
-        return ResponseEntity.ok(companyService.updateMyCompany(request));
+        return ResponseEntity.ok(companyService.updateCompany(request));
     }
 }

@@ -2,7 +2,7 @@ package com.br.stockpro.dtos.category;
 
 import jakarta.validation.constraints.Size;
 
-public record CategoryUpadateRequest(
+public record CategoryUpdateRequest(
 
         @Size(min = 3, max = 50, message = "Nome deve ter entre 3 a 50 caracteres")
         String name,

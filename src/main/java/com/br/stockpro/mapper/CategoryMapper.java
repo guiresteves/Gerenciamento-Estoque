@@ -2,7 +2,7 @@ package com.br.stockpro.mapper;
 
 import com.br.stockpro.dtos.category.CategoryCreateRequest;
 import com.br.stockpro.dtos.category.CategoryResponse;
-import com.br.stockpro.dtos.category.CategoryUpadateRequest;
+import com.br.stockpro.dtos.category.CategoryUpdateRequest;
 import com.br.stockpro.model.Category;
 import org.mapstruct.*;
 
@@ -18,7 +18,7 @@ public interface CategoryMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
     void updateEntityFromDTO(
-            CategoryUpadateRequest request,
+            CategoryUpdateRequest request,
             @MappingTarget Category entity
     );
 
