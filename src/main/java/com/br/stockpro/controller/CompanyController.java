@@ -20,7 +20,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getMyCompany());
     }
 
-    @PutMapping("/me")
+    @PatchMapping("/me")
     public ResponseEntity<CompanyResponse> updateMyCompany(
             @RequestBody @Valid CompanyUpdateRequest request
     ) {

@@ -55,7 +55,4 @@ public class Company extends Auditable {
     @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
-
-    @OneToOne(mappedBy = "companny")
-    private Company company;
 }
