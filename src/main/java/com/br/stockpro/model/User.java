@@ -28,24 +28,21 @@ public class User extends Auditable implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String name;
 
-    @NotBlank
     @Email
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
 
-    @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
     private Role role;
 
