@@ -27,7 +27,7 @@ public class CategoryService {
     private final AuthenticatedUserService authenticatedUserService;
 
     @Transactional
-    public CategoryResponse creatCategory(CategoryCreateRequest request) {
+    public CategoryResponse createCategory(CategoryCreateRequest request) {
 
         User currentUser = authenticatedUserService.getCurrentUser();
 
