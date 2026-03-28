@@ -1,12 +1,14 @@
 package com.br.stockpro.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
 @Table(
         name = "categories",
+        indexes = {
+                @Index(name = "idx_category_company", columnList = "company_id")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_category_company_name",
@@ -25,8 +27,7 @@ public class Category extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -36,6 +37,7 @@ public class Category extends Auditable {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
 }
