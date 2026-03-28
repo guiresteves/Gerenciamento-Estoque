@@ -10,11 +10,14 @@ import org.mapstruct.*;
 public interface CategoryMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "company", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Category toEntity(CategoryCreateRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    void updateEntity(
+    @Mapping(target = "company", ignore = true)
+    void updateEntityFromDTO(
             CategoryUpadateRequest request,
             @MappingTarget Category entity
     );
