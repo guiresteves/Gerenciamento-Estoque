@@ -12,12 +12,12 @@ public interface SupplierMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "active", ignore = true)
-    Supplier toSupplier(SupplierCreateRequest request);
+    Supplier toEntity(SupplierCreateRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
-    void updateSupplierFromDTO(
+    void updateEntityFromDTO(
             SupplierUpdateRequest request,
             @MappingTarget Supplier target
     );
