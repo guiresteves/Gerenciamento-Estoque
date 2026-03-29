@@ -10,7 +10,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByIdAndCompanyId(Long id, Long companyId);
 
-    List<Category> findAllByByCompanyId(Long companyId);
+    List<Category> findAllByCompanyId(Long companyId);
 
     boolean existsByNameIgnoreCaseAndCompanyId(String name, Long companyId);
 

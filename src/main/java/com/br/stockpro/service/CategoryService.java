@@ -60,7 +60,7 @@ public class CategoryService {
 
         Company company = currentUser.getCompany();
 
-        return categoryRepository.findAllByByCompanyId(company.getId())
+        return categoryRepository.findAllByCompanyId(company.getId())
                 .stream()
                 .map(categoryMapper::toResponse)
                 .toList();

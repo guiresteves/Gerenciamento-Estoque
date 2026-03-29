@@ -32,24 +32,24 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findAllCategories());
     }
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> findCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findCategoryById(id));
     }
 
-    @PatchMapping("/id")
+    @PatchMapping("/{id}")
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable Long id,
             @RequestBody @Valid CategoryUpdateRequest request) {
         return ResponseEntity.ok(categoryService.updateCategory(id, request));
     }
 
-    @PatchMapping("/id/activate")
+    @PatchMapping("/{id}/activate")
     public ResponseEntity<CategoryResponse> activateCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.activate(id));
     }
 
-    @PatchMapping("/id/deactivate")
+    @PatchMapping("/{id}/deactivate")
     public ResponseEntity<CategoryResponse> deactivateCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.deactivate(id));
     }
