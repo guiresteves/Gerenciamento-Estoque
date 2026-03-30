@@ -32,7 +32,6 @@ public class Company extends Auditable {
     @Column(nullable = false, length = 250)
     private String tradeName;
 
-    @NotBlank
     @Column(nullable = false, unique = true, length = 18)
     private String cnpj;
 
