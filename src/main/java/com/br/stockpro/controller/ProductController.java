@@ -2,7 +2,7 @@ package com.br.stockpro.controller;
 
 import com.br.stockpro.dtos.product.ProductCreateRequest;
 import com.br.stockpro.dtos.product.ProductResponse;
-import com.br.stockpro.dtos.product.ProductUpdatedRequest;
+import com.br.stockpro.dtos.product.ProductUpdateRequest;
 import com.br.stockpro.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> update(@PathVariable Long id, @RequestBody @Valid ProductUpdatedRequest request){
+    public ResponseEntity<ProductResponse> update(@PathVariable Long id, @RequestBody @Valid ProductUpdateRequest request){
         return ResponseEntity.ok(productService.update(id, request));
     }
 

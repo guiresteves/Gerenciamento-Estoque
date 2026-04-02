@@ -2,7 +2,7 @@ package com.br.stockpro.service;
 
 import com.br.stockpro.dtos.product.ProductCreateRequest;
 import com.br.stockpro.dtos.product.ProductResponse;
-import com.br.stockpro.dtos.product.ProductUpdatedRequest;
+import com.br.stockpro.dtos.product.ProductUpdateRequest;
 import com.br.stockpro.exceptions.BusinessException;
 import com.br.stockpro.mapper.ProductMapper;
 import com.br.stockpro.model.Category;
@@ -57,7 +57,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse update(Long id, ProductUpdatedRequest request) {
+    public ProductResponse update(Long id, ProductUpdateRequest request) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Produto não encontrado"));
