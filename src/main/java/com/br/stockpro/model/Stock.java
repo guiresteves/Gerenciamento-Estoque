@@ -49,9 +49,6 @@ public class Stock extends Auditable {
     @Column(name = "min_quantity", nullable = false)
     private Integer minQuantity = 0;
 
-    @Column(name = "average_cost", precision = 19, scale = 2)
-    private BigDecimal averageCost;
-
     @Column(length = 100)
     private String location;
 

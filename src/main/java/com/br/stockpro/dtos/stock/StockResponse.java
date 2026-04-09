@@ -17,7 +17,6 @@ public record StockResponse(
 
         Integer minQuantity,
 
-        BigDecimal averageCost,
         String location,
         Boolean active,
         Boolean belowMinimum,

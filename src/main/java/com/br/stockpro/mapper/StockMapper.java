@@ -22,6 +22,8 @@ public interface StockMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "product", ignore = true)
+    @Mapping(target = "quantity", ignore = true)
+    @Mapping(target = "reservedQuantity", ignore = true)
     void updateEntityFromDTO(StockUpdateRequest dto, @MappingTarget Stock entity);
 
     @Mapping(target = "productId", source = "product.id")
