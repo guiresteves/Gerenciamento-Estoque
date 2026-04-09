@@ -222,7 +222,7 @@ public class StockService {
             throw new BusinessException("A quantidade a liberar é maior que a quantidade reservada");
         }
 
-        stock.setReservedQuantity(stock.getReservedQuantity() - quantity);]]
+        stock.setReservedQuantity(stock.getReservedQuantity() - quantity);
         validateReservedQuantity(stock);
 
         Stock updated = stockRepository.save(stock);
