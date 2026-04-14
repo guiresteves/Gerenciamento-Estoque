@@ -87,8 +87,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Data integrity violation: {}", ex.getMostSpecificCause().getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                buildError(HttpStatus.CONFLICT, "Não foi possível concluir a operação devido a conflito de dados.", request.getRequestURI(), null)
+                buildError(HttpStatus.CONFLICT, "Conflito de dados. Verifique informações duplicadas.", request.getRequestURI(), null)
         );
     }
 
