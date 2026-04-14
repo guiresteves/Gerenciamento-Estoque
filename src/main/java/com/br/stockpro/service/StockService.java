@@ -38,7 +38,7 @@ public class StockService {
                 .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
 
         if (stockRepository.existsByProductIdAndCompanyId(product.getId(), company.getId())) {
-            throw new BusinessException("Jás existe estoque cadastrado no sistema");
+            throw new BusinessException("Já existe estoque cadastrado para este produto");
         }
 
         Stock stock = stockMapper.toEntity(request);
@@ -69,7 +69,7 @@ public class StockService {
         Company company = getAuthenticatedCompany();
 
         Stock stock = stockRepository.findByProductIdAndCompanyId(productId, company.getId())
-                .orElseThrow(() -> new NotFoundException("Estoque não econtrrado"));
+                .orElseThrow(() -> new NotFoundException("Estoque não econtrado"));
 
         return stockMapper.toResponse(stock);
     }
@@ -243,7 +243,7 @@ public class StockService {
     private Stock getStockByProductId(Long productId) {
         Company company = getAuthenticatedCompany();
 
-        return stockRepository.findByProductIdAndCompanyId(productId, company.getId())
+        return stockRepository.findByProductIdAndCompanyIdAndActiveTrue(productId, company.getId())
                 .orElseThrow(() -> new NotFoundException("Estoque não encontrado para o produto informado"));
     }
 

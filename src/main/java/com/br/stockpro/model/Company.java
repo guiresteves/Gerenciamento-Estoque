@@ -13,7 +13,8 @@ import lombok.*;
 @Table(
         name = "companies",
         indexes = {
-                @Index(name = "idx_company_cnpj", columnList = "cnpj")
+                @Index(name = "idx_company_cnpj", columnList = "cnpj"),
+                @Index(name = "idx_company_email", columnList = "email")
         }
 
 )

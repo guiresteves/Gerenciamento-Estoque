@@ -26,9 +26,12 @@ public class AuthenticatedUserService {
             throw new BusinessException("Usuário não autenticado");
         }
 
-        String email = authentication.getName();
+        Object principal = authentication.getPrincipal();
 
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Usuário autenticado não encontrado"));
+        if (principal instanceof User user) {
+            return user;
+        }
+
+        throw new BusinessException("Usuário não autenticado");
     }
 }

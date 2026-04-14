@@ -20,13 +20,15 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     List<Stock> findAllByCompanyIdAndActiveTrue(Long companyId);
 
+    Optional<Stock> findByProductIdAndCompanyIdAndActiveTrue(Long productId, Long companyId);
+
     @Query("""
-           SELECT s
-           FROM Stock s
-           WHERE s.company.id = :companyId
-             AND s.active = true
-             AND s.quantity <= s.minQuantity
-           """)
+       SELECT s FROM Stock s
+       WHERE s.company.id = :companyId
+         AND s.active = true
+         AND s.quantity > 0
+         AND s.quantity <= s.minQuantity
+       """)
     List<Stock> findLowStockByCompanyId(Long companyId);
 
     @Query("""

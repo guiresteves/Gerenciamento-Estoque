@@ -25,9 +25,9 @@ public class StockController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<StockResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(stockService.findById(id));
+    @GetMapping("/{stockId}")
+    public ResponseEntity<StockResponse> findById(@PathVariable Long stockId) {
+        return ResponseEntity.ok(stockService.findById(stockId));
     }
 
     @GetMapping("/product/{productId}")
@@ -57,10 +57,10 @@ public class StockController {
 
     @PatchMapping("/{stockId}")
     public ResponseEntity<StockResponse> updateStock(
-            @PathVariable Long id,
+            @PathVariable Long stockId,
             @RequestBody @Valid StockUpdateRequest request
     ) {
-        return ResponseEntity.ok(stockService.updateStock(id, request));
+        return ResponseEntity.ok(stockService.updateStock(stockId, request));
     }
 
     @PatchMapping("/product/{productId}/add")

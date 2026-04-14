@@ -3,8 +3,6 @@ package com.br.stockpro.mapper;
 import com.br.stockpro.dtos.stock.StockCreateRequest;
 import com.br.stockpro.dtos.stock.StockResponse;
 import com.br.stockpro.dtos.stock.StockUpdateRequest;
-import com.br.stockpro.model.Category;
-import com.br.stockpro.model.Company;
 import com.br.stockpro.model.Product;
 import com.br.stockpro.model.Stock;
 import org.mapstruct.*;
@@ -16,6 +14,7 @@ public interface StockMapper {
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "product", source = "productId")
     @Mapping(target = "active", constant = "true")
+    @Mapping(target = "reservedQuantity", constant = "0")
     Stock toEntity(StockCreateRequest dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -32,6 +31,7 @@ public interface StockMapper {
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "availableQuantity", expression = "java(stock.getAvailableQuantity())")
     @Mapping(target = "belowMinimum", expression = "java(stock.isBelowMinimum())")
+    @Mapping(target = "unitOfMeasure", source = "product.unitOfMeasure")
     StockResponse toResponse(Stock stock);
 
     default Product mapProduct(Long productId) {

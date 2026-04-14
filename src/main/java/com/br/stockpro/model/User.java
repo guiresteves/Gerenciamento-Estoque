@@ -31,7 +31,6 @@ public class User extends Auditable implements UserDetails {
     @Column(nullable = false, length = 150)
     private String name;
 
-    @Email
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
