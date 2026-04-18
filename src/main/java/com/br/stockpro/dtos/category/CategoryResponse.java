@@ -11,7 +11,7 @@ public record CategoryResponse(
         Boolean active,
 
         Instant createdAt,
-        Instant updetedAt
+        Instant updatedAt
 
 ) {
 }
