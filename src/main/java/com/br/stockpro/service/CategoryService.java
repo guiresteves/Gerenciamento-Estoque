@@ -28,14 +28,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse createCategory(CategoryCreateRequest request) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = currentUser.getCompany();
+        Company company = getCurrentUserCompany();
 
         if (categoryRepository.existsByNameIgnoreCaseAndCompanyId(request.name(), company.getId())) {
             throw new BusinessException("Já existe uma Categoria com esse nome");
@@ -50,52 +43,29 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryResponse> findAllCategories() {
+    public List<CategoryResponse> findAllCategories(Boolean active) {
+        Company company = getCurrentUserCompany();
 
-        User currentUser = authenticatedUserService.getCurrentUser();
+        List<Category> categories = (active != null)
+                ? categoryRepository.findAllByCompanyIdAndActive(company.getId(), active)
+                : categoryRepository.findAllByCompanyId(company.getId());
 
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = currentUser.getCompany();
-
-        return categoryRepository.findAllByCompanyId(company.getId())
-                .stream()
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public CategoryResponse findCategoryById(Long id) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = currentUser.getCompany();
-
-        Category category = categoryRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Categoria não encontrada."));
-
+        Company company = getCurrentUserCompany();
+        Category category = getCategoryOrThrow(id, company.getId());
         return categoryMapper.toResponse(category);
     }
 
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryUpdateRequest request) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = currentUser.getCompany();
-
-        Category category = categoryRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+        Company company = getCurrentUserCompany();
+        Category category = getCategoryOrThrow(id, company.getId());
 
         if (!Boolean.TRUE.equals(category.getActive())) {
             throw new BusinessException("Não é possível alterar uma categoria inativa");
@@ -103,9 +73,7 @@ public class CategoryService {
 
         if (request.name() != null
                 && categoryRepository.existsByNameIgnoreCaseAndCompanyIdAndIdNot(
-                        request.name(),
-                        company.getId(),
-                        category.getId())
+                        request.name(), company.getId(), category.getId())
         ) {
             throw new BusinessException("Já existe uma Categoria com esse nome");
         }
@@ -118,19 +86,14 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse activate(Long id) {
-        User currentUser = authenticatedUserService.getCurrentUser();
+        Company company = getCurrentUserCompany();
+        Category category = getCategoryOrThrow(id, company.getId());
 
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
+        if (Boolean.TRUE.equals(category.getActive())) {
+            throw new BusinessException("Categoria já está ativa");
         }
 
-        Company company = currentUser.getCompany();
-
-        Category category = categoryRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
-
         category.setActive(true);
-
         Category updatedCategory = categoryRepository.save(category);
 
         return categoryMapper.toResponse(updatedCategory);
@@ -138,21 +101,29 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse deactivate(Long id) {
-        User currentUser = authenticatedUserService.getCurrentUser();
+        Company company = getCurrentUserCompany();
+        Category category = getCategoryOrThrow(id, company.getId());
 
-        if (currentUser.getCompany() == null) {
-            throw new BusinessException("Usuário não possui empresa vinculada");
+        if (!Boolean.TRUE.equals(category.getActive())) {
+            throw new BusinessException("Categoria já está inativa");
         }
 
-        Company company = currentUser.getCompany();
-
-        Category category = categoryRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
-
         category.setActive(false);
-
         Category updatedCategory = categoryRepository.save(category);
 
         return categoryMapper.toResponse(updatedCategory);
+    }
+
+    private Company getCurrentUserCompany() {
+        User currentUser = authenticatedUserService.getCurrentUser();
+        if (currentUser.getCompany() == null) {
+            throw new BusinessException("Usuário não possui empresa vinculada");
+        }
+        return currentUser.getCompany();
+    }
+
+    private Category getCategoryOrThrow(Long id, Long companyId) {
+        return categoryRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
     }
 }
