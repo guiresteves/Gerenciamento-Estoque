@@ -28,8 +28,9 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> findAllCategories() {
-        return ResponseEntity.ok(categoryService.findAllCategories());
+    public ResponseEntity<List<CategoryResponse>> findAllCategories(
+            @RequestParam(required = false) Boolean active) {
+        return ResponseEntity.ok(categoryService.findAllCategories(active));
     }
 
     @GetMapping("/{id}")
