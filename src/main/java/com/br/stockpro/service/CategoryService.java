@@ -43,10 +43,14 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryResponse> findAllCategories() {
+    public List<CategoryResponse> findAllCategories(Boolean active) {
         Company company = getCurrentUserCompany();
-        return categoryRepository.findAllByCompanyId(company.getId())
-                .stream()
+
+        List<Category> categories = (active != null)
+                ? categoryRepository.findAllByCompanyIdAndActive(company.getId(), active)
+                : categoryRepository.findAllByCompanyId(company.getId());
+
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
