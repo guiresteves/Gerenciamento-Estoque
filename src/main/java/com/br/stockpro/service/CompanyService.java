@@ -78,30 +78,4 @@ public class CompanyService {
         return companyRepository.findById(currentUser.getCompany().getId())
                 .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
     }
-
-    @Transactional
-    public CompanyResponse activate() {
-
-        Company company = getCurrentUserCompany();
-
-        if (Boolean.TRUE.equals(company.getActive())) {
-            throw new BusinessException("Empresa já está ativa");
-        }
-
-        company.setActive(true);
-        return companyMapper.toResponse(companyRepository.save(company));
-    }
-
-    @Transactional
-    public CompanyResponse deactivate() {
-
-        Company company = getCurrentUserCompany();
-
-        if (!Boolean.TRUE.equals(company.getActive())) {
-            throw new BusinessException("Empresa já está inativa");
-        }
-
-        company.setActive(false);
-        return companyMapper.toResponse(companyRepository.save(company));
-    }
 }
