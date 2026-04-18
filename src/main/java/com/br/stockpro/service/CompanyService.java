@@ -32,11 +32,11 @@ public class CompanyService {
         User currentUser = authenticatedUserService.getCurrentUser();
 
         if (currentUser.getCompany() != null) {
-            throw new NotFoundException("Usuário já possui empresa vinculada");
+            throw new BusinessException("Usuário já possui empresa vinculada");
         }
 
         if (companyRepository.existsByCnpj(request.cnpj())) {
-            throw new NotFoundException("Usuário não possui empresa vinculada");
+            throw new NotFoundException("Já existe uma empresa cadastrada com este CNPJ");
         }
 
         Company company = companyMapper.toEntity(request);
@@ -50,30 +50,13 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public CompanyResponse getCompany() {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new NotFoundException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = companyRepository.findById(currentUser.getCompany().getId())
-                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
-
-        return companyMapper.toResponse(company);
+        return companyMapper.toResponse(getCurrentUserCompany());
     }
 
     @Transactional
     public CompanyResponse updateCompany(CompanyUpdateRequest request) {
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new NotFoundException("Usuário não possui empresa vinculada");
-        }
-
-        Company company = companyRepository.findById(currentUser.getCompany().getId())
-                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
+        Company company = getCurrentUserCompany();
 
         if (!Boolean.TRUE.equals(company.getActive())) {
             throw new BusinessException("Não é possível alterar uma empresa inativa");
@@ -83,5 +66,42 @@ public class CompanyService {
         Company updatedCompany = companyRepository.save(company);
 
         return companyMapper.toResponse(updatedCompany);
+    }
+
+    private Company getCurrentUserCompany() {
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        if (currentUser.getCompany() == null) {
+            throw new NotFoundException("Usuário não possui empresa vinculada");
+        }
+
+        return companyRepository.findById(currentUser.getCompany().getId())
+                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
+    }
+
+    @Transactional
+    public CompanyResponse activate() {
+
+        Company company = getCurrentUserCompany();
+
+        if (Boolean.TRUE.equals(company.getActive())) {
+            throw new BusinessException("Empresa já está ativa");
+        }
+
+        company.setActive(true);
+        return companyMapper.toResponse(companyRepository.save(company));
+    }
+
+    @Transactional
+    public CompanyResponse deactivate() {
+
+        Company company = getCurrentUserCompany();
+
+        if (!Boolean.TRUE.equals(company.getActive())) {
+            throw new BusinessException("Empresa já está inativa");
+        }
+
+        company.setActive(false);
+        return companyMapper.toResponse(companyRepository.save(company));
     }
 }
