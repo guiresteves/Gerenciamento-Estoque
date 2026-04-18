@@ -1,6 +1,7 @@
 package com.br.stockpro.dtos.company;
 
 import com.br.stockpro.enums.CompanyType;
+import com.br.stockpro.validation.annotation.ValidCNPJ;
 import jakarta.validation.constraints.*;
 
 public record CompanyCreateRequest(
@@ -14,7 +15,7 @@ public record CompanyCreateRequest(
         String tradeName,
 
         @NotBlank(message = "CNPJ é obrigatório")
-        @Pattern(regexp = "\\d{14}", message = "CNPJ deve conter 14 dígitos numéricos")
+        @ValidCNPJ
         String cnpj,
 
         @Size(max = 50, message = "Inscrição estadual deve ter no máximo 50 caracteres")
