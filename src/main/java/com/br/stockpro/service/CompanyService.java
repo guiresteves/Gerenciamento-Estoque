@@ -32,11 +32,11 @@ public class CompanyService {
         User currentUser = authenticatedUserService.getCurrentUser();
 
         if (currentUser.getCompany() != null) {
-            throw new NotFoundException("Usuário já possui empresa vinculada");
+            throw new BusinessException("Usuário já possui empresa vinculada");
         }
 
         if (companyRepository.existsByCnpj(request.cnpj())) {
-            throw new NotFoundException("Usuário não possui empresa vinculada");
+            throw new NotFoundException("Já existe uma empresa cadastrada com este CNPJ");
         }
 
         Company company = companyMapper.toEntity(request);
