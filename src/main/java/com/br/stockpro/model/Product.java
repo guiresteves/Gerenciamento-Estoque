@@ -57,6 +57,12 @@ public class Product extends Auditable {
     @Column(name = "sale_price", nullable = false)
     private BigDecimal salePrice;
 
+    @Column(name = "min_stock")
+    private Integer minStock;
+
+    @Column(name = "max_stock")
+    private Integer maxStock;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;

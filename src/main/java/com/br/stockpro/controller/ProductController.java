@@ -34,8 +34,15 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> findAllProducts() {
-        return ResponseEntity.ok(productService.findAllProducts());
+    public ResponseEntity<List<ProductResponse>> findAllProducts(
+            @RequestParam(required = false) Boolean active
+    ) {
+        return ResponseEntity.ok(productService.findAllProducts(active));
+    }
+
+    @GetMapping("/barcode/{barcode}")
+    public ResponseEntity<ProductResponse> findByBarcode(@PathVariable String barcode) {
+        return ResponseEntity.ok(productService.findByBarcode(barcode));
     }
 
     @GetMapping("/{id}")

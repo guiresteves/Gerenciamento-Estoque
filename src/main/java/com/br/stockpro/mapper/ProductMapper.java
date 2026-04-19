@@ -27,11 +27,4 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "categoryName", source = "category.name")
     ProductResponse toResponse(Product product);
-
-    default Category mapCategory(Long categoryId) {
-        if (categoryId == null) return null;
-        return Category.builder()
-                .id(categoryId)
-                .build();
-    }
 }

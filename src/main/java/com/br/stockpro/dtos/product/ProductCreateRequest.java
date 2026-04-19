@@ -33,6 +33,11 @@ public record ProductCreateRequest(
         @Digits(integer = 10, fraction = 2)
         BigDecimal salePrice,
 
+        @Min(value = 0, message = "Estoque mínimo deve ser maior ou igual a zero")
+        Integer minStock,
+        @Min(value = 0, message = "Estoque máximo deve ser maior ou igual a zero")
+        Integer maxStock,
+
         @NotNull(message = "Categoria é obrigatória")
         Long categoryId
 ) {

@@ -17,6 +17,9 @@ public record ProductResponse(
         BigDecimal costPrice,
         BigDecimal salePrice,
 
+        Integer minStock,
+        Integer maxStock,
+
         Long companyId,
         String companyLegalName,
 
