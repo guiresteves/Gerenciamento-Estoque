@@ -12,7 +12,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsByBarcodeAndCompanyIdAndIdNot(String barcode, Long companyId, Long id);
 
+    Optional<Product> findByBarcodeAndCompanyId(String barcode, Long companyId);
     Optional<Product> findByIdAndCompanyId(Long id, Long companyId);
 
     List<Product> findAllByCompanyId(Long companyId);
+    List<Product> findAllByCompanyIdAndActive(Long companyId, Boolean active);
 }

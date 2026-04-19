@@ -31,75 +31,75 @@ public class ProductService {
 
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest request){
+        Company company = getCurrentUserCompany();
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
+        validateStockLimits(request.minStock(), request.maxStock());
 
         if (productRepository.existsByBarcodeAndCompanyId(request.barcode(), company.getId())){
             throw new BusinessException("Já existe um produto com esse código de barra");
         }
 
-        Category category = categoryRepository.findByIdAndCompanyId(request.categoryId(), company.getId())
-                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+        Category category = getActiveCategoryOrThrow(request.categoryId(), company.getId());
+
+        if (!Boolean.TRUE.equals(category.getActive())) {
+            throw new BusinessException("Não é possível vincular produto a uma categoria inativa");
+        }
 
         Product product = productMapper.toEntity(request);
-        product.setCategory(category);
         product.setCompany(company);
+        product.setCategory(category);
 
-        productRepository.save(product);
-        return productMapper.toResponse(product);
+        return productMapper.toResponse(productRepository.save(product));
     }
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> findAllProducts(){
+    public List<ProductResponse> findAllProducts(Boolean active){
+        Company company = getCurrentUserCompany();
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
+        List<Product> products = (active != null)
+                ? productRepository.findAllByCompanyIdAndActive(company.getId(), active)
+                : productRepository.findAllByCompanyId(company.getId());
 
-        return productRepository.findAllByCompanyId(company.getId())
-                .stream()
+        return products.stream()
                 .map(productMapper::toResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public ProductResponse findProductById(Long id){
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Product product = productRepository.findByIdAndCompanyId(id, company.getId())
+    public ProductResponse findByBarcode(String barcode) {
+        Company company = getCurrentUserCompany();
+        return productRepository.findByBarcodeAndCompanyId(barcode, company.getId())
+                .map(productMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+    }
 
+    @Transactional(readOnly = true)
+    public ProductResponse findProductById(Long id){
+        Company company = getCurrentUserCompany();
+        Product product = getProductOrThrow(id, company.getId());
         return productMapper.toResponse(product);
     }
 
+    @Transactional
     public ProductResponse updateProduct(Long id, ProductUpdateRequest request){
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Product product = productRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+        Company company = getCurrentUserCompany();
+        Product product = getProductOrThrow(id, company.getId());
 
         if (!Boolean.TRUE.equals(product.getActive())){
             throw new BusinessException("Não é possivel alterar produto inativo");
         }
 
+        validateStockLimits(request.minStock(), request.maxStock());
+
         if (request.barcode() != null &&
                 productRepository.existsByBarcodeAndCompanyIdAndIdNot(
-                        request.barcode(),
-                        company.getId(),
-                        product.getId()
+                        request.barcode(), company.getId(), product.getId()
         )) {
             throw new BusinessException("Já existe um produto com esse código de barras para esta empresa");
         }
 
-        if (request.categoryId() != null){
-
-            Category category = categoryRepository.findByIdAndCompanyId(request.categoryId(), company.getId())
-                    .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
-
+        if (request.categoryId() != null) {
+            Category category = getActiveCategoryOrThrow(request.categoryId(), company.getId());
             product.setCategory(category);
         }
 
@@ -111,12 +111,12 @@ public class ProductService {
 
     @Transactional
     public ProductResponse activate(Long id){
+        Company company = getCurrentUserCompany();
+        Product product = getProductOrThrow(id, company.getId());
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Product product = productRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+        if (Boolean.TRUE.equals(product.getActive())) {
+            throw new BusinessException("Produto já está ativo");
+        }
 
         product.setActive(true);
 
@@ -126,12 +126,12 @@ public class ProductService {
 
     @Transactional
     public ProductResponse deactivate(Long id){
+        Company company = getCurrentUserCompany();
+        Product product = getProductOrThrow(id, company.getId());
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Product product = productRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+        if (!Boolean.TRUE.equals(product.getActive())) {
+            throw new BusinessException("Produto já está inativo");
+        }
 
         product.setActive(false);
 
@@ -139,7 +139,30 @@ public class ProductService {
         return productMapper.toResponse(updatedProduct);
     }
 
-    private Company getCurrentUserCompany(User currentUser) {
+    private void validateStockLimits(Integer minStock, Integer maxStock) {
+        if (minStock != null && maxStock != null && minStock > maxStock) {
+            throw new BusinessException("Estoque mínimo não pode ser maior que o estoque máximo");
+        }
+    }
+
+    private Category getActiveCategoryOrThrow(Long categoryId, Long companyId) {
+        Category category = categoryRepository.findByIdAndCompanyId(categoryId, companyId)
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        if (!Boolean.TRUE.equals(category.getActive())) {
+            throw new BusinessException("Não é possível vincular produto a uma categoria inativa");
+        }
+
+        return category;
+    }
+
+    private Product getProductOrThrow(Long id, Long companyId) {
+        return productRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+    }
+
+    private Company getCurrentUserCompany() {
+        User currentUser = authenticatedUserService.getCurrentUser();
         if (currentUser.getCompany() == null) {
             throw new BusinessException("Usuário não possui empresa vinculada");
         }
