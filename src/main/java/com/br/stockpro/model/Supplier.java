@@ -49,6 +49,9 @@ public class Supplier extends Auditable {
     @Column(nullable = false, length = 150)
     private String email;
 
+    @Column(length = 150)
+    private String contactName;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;

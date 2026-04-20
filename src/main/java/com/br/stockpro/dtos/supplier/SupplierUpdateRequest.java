@@ -22,6 +22,9 @@ public record SupplierUpdateRequest(
 
         @Email(message = "Email inválido")
         @Size(max = 150, message = "Email deve ter no máximo 150 caracteres")
-        String email
+        String email,
+
+        @Size(max = 150, message = "O Nome do responsável deve ter no máximo 150 caracteres")
+        String contactName
 ) {
 }
