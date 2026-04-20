@@ -13,6 +13,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     List<Supplier> findAllByCompanyIdAndActive(Long companyId, Boolean active);
     List<Supplier> findAllByCompanyId(Long companyId);
+    Optional<Supplier> findByCnpjAndCompanyId(String cnpj, Long companyId);
 
     boolean existsByCnpjAndCompanyId(String cnpj, Long companyId);
 }

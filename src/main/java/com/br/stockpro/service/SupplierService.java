@@ -48,8 +48,7 @@ public class SupplierService {
                 : supplierRepository.findAllByCompanyId(company.getId());
 
 
-        return supplierRepository.findAllByCompanyId(company.getId())
-                .stream()
+        return suppliers.stream()
                 .map(supplierMapper::toResponse)
                 .toList();
     }
