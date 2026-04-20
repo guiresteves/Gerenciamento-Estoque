@@ -14,6 +14,8 @@ public record SupplierResponse(
         String phone,
         String email,
 
+        String contactName,
+
         Boolean active,
 
         Instant createdAt,

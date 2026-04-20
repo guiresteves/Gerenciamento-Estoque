@@ -28,8 +28,9 @@ public class SupplierController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SupplierResponse>> findAllSuppliers() {
-        return ResponseEntity.ok(supplierService.findAllSuppliers());
+    public ResponseEntity<List<SupplierResponse>> findAllSuppliers(
+            @RequestParam(required = false) Boolean active ) {
+        return ResponseEntity.ok(supplierService.findAllSuppliers(active));
     }
 
     @GetMapping("/{id}")

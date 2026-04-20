@@ -1,5 +1,7 @@
 package com.br.stockpro.dtos.supplier;
 
+import com.br.stockpro.validation.annotation.ValidCNPJ;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public record SupplierCreateRequest(
@@ -13,7 +15,7 @@ public record SupplierCreateRequest(
         String tradeName,
 
         @NotBlank(message = "CNPJ é obrigatório")
-        @Pattern(regexp = "\\d{14}", message = "CNPJ deve conter 14 dígitos numéricos")
+        @ValidCNPJ
         String cnpj,
 
         @Size(max = 50, message = "Inscrição estadual deve ter no máximo 50 caracteres")
@@ -30,6 +32,9 @@ public record SupplierCreateRequest(
         @Email(message = "Email Inválido")
         @NotBlank(message = "Email é obrigatório")
         @Size(max = 150, message = "O email deve ter no máximo 150 caracteres")
-        String email
+        String email,
+
+        @Size(max = 150, message = "O Nome do responsável deve ter no máximo 150 caracteres")
+        String contactName
 ) {
 }
