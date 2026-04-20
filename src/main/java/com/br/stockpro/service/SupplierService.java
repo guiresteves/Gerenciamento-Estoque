@@ -27,9 +27,7 @@ public class SupplierService {
 
     @Transactional
     public SupplierResponse createSupplier(SupplierCreateRequest request) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
+        Company company = getCurrentUserCompany();
 
         if (supplierRepository.existsByCnpjAndCompanyId(request.cnpj(), company.getId())) {
             throw new BusinessException("Já existe um Fornecedor com esse CNPJ para esta empresa");
@@ -38,15 +36,17 @@ public class SupplierService {
         Supplier supplier = supplierMapper.toEntity(request);
         supplier.setCompany(company);
 
-        supplier = supplierRepository.save(supplier);
-        return supplierMapper.toResponse(supplier);
+        return supplierMapper.toResponse(supplierRepository.save(supplier));
     }
 
     @Transactional(readOnly = true)
-    public List<SupplierResponse> findAllSuppliers() {
+    public List<SupplierResponse> findAllSuppliers(Boolean active) {
+        Company company = getCurrentUserCompany();
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
+        List<Supplier> suppliers = (active != null)
+                ? supplierRepository.findAllByCompanyIdAndActive(company.getId(), active)
+                : supplierRepository.findAllByCompanyId(company.getId());
+
 
         return supplierRepository.findAllByCompanyId(company.getId())
                 .stream()
@@ -56,59 +56,48 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public SupplierResponse findSupplierById(Long id) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Supplier supplier = supplierRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(()-> new NotFoundException("Fornecedor não encontrado."));
+        Company company = getCurrentUserCompany();
+        Supplier supplier = getSupplierOrThrow(company.getId(), id);
 
         return supplierMapper.toResponse(supplier);
     }
 
     @Transactional
     public SupplierResponse updateSupplier(Long id, SupplierUpdateRequest request) {
-
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Supplier supplier = supplierRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(()-> new NotFoundException("Fornecedor não encontrado."));
+        Company company = getCurrentUserCompany();
+        Supplier supplier = getSupplierOrThrow(company.getId(), id);
 
         if (!Boolean.TRUE.equals(supplier.getActive())) {
             throw new BusinessException("Não é possível alterar um fornecedor inativo");
         }
 
         supplierMapper.updateEntityFromDTO(request, supplier);
-        Supplier updatedSupplier = supplierRepository.save(supplier);
-
-        return supplierMapper.toResponse(updatedSupplier);
+        return supplierMapper.toResponse(supplierRepository.save(supplier));
     }
 
     @Transactional
     public SupplierResponse activate(Long id) {
+        Company company = getCurrentUserCompany();
+        Supplier supplier = getSupplierOrThrow(company.getId(), id);
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Supplier supplier = supplierRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(()-> new NotFoundException("Fornecedor não encontrado."));
+        if (!Boolean.FALSE.equals(supplier.getActive())) {
+            throw new BusinessException("Fornecedor já está ativo");
+        }
 
         supplier.setActive(Boolean.TRUE);
 
         Supplier updatedSupplier  = supplierRepository.save(supplier);
         return supplierMapper.toResponse(updatedSupplier);
-
     }
 
     @Transactional
     public SupplierResponse deactivate(Long id) {
+        Company company = getCurrentUserCompany();
+        Supplier supplier = getSupplierOrThrow(company.getId(), id);
 
-        User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCurrentUserCompany(currentUser);
-
-        Supplier supplier = supplierRepository.findByIdAndCompanyId(id, company.getId())
-                .orElseThrow(()-> new NotFoundException("Fornercedor não encontrado."));
+        if (!Boolean.TRUE.equals(supplier.getActive())) {
+            throw new BusinessException("Fornecedor já está inativo");
+        }
 
         supplier.setActive(Boolean.FALSE);
 
@@ -117,10 +106,17 @@ public class SupplierService {
 
     }
 
-    private Company getCurrentUserCompany(User currentUser) {
+    private Company getCurrentUserCompany() {
+        User currentUser = authenticatedUserService.getCurrentUser();
+
         if (currentUser.getCompany() == null) {
             throw new BusinessException("Usuário não possui empresa vinculada");
         }
         return currentUser.getCompany();
+    }
+
+    private Supplier getSupplierOrThrow(Long id, Long companyId) {
+        return supplierRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new NotFoundException("Fornecedor não encontrado"));
     }
 }
