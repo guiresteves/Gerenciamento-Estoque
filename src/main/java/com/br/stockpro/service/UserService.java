@@ -45,7 +45,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponse> findAllUser(Boolean active) {
+    public List<UserResponse> findAllUsers(Boolean active) {
         Company company = getCurrentUserCompany();
 
         List<User> users = (active != null)
