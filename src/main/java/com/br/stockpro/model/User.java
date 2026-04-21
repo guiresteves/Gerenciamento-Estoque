@@ -14,7 +14,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(
-        name = "users"
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email"),
+                @Index(name = "idx_user_company", columnList = "company_id")
+        }
 )
 @Entity
 @Getter
@@ -36,6 +40,9 @@ public class User extends Auditable implements UserDetails {
 
     @Column(nullable = false, length = 255)
     private String password;
+
+    @Column(length = 14)
+    private String cpf;
 
     @Builder.Default
     @Column(nullable = false)
