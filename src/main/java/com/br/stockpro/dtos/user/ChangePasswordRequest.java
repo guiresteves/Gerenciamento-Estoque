@@ -1,4 +1,4 @@
-package com.br.stockpro.dtos.auth;
+package com.br.stockpro.dtos.user;
 
 import jakarta.validation.constraints.*;
 
