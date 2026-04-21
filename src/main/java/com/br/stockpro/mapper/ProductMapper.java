@@ -12,14 +12,14 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
-    @Mapping(target = "category", source = "categoryId")
+    @Mapping(target = "category", ignore = true) // service cuida disso
     @Mapping(target = "active", constant = "true")
     Product toEntity(ProductCreateRequest dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
-    @Mapping(target = "category", source = "categoryId")
+    @Mapping(target = "category", ignore = true) // service cuida disso
     void updateEntityFromDTO(ProductUpdateRequest dto, @MappingTarget Product entity);
 
     @Mapping(target = "companyId", source = "company.id")
@@ -27,4 +27,3 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "categoryName", source = "category.name")
     ProductResponse toResponse(Product product);
-}
