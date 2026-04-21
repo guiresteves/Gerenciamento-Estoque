@@ -14,7 +14,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(
-        name = "users"
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email"),
+                @Index(name = "idx_user_company", columnList = "company_id")
+        }
 )
 @Entity
 @Getter
