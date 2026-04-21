@@ -37,6 +37,9 @@ public class User extends Auditable implements UserDetails {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(length = 14)
+    private String cpf;
+
     @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
