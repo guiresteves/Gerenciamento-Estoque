@@ -12,8 +12,8 @@ public interface StockMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
-    @Mapping(target = "product", source = "productId")
     @Mapping(target = "active", constant = "true")
+    @Mapping(target = "product", ignore = true)
     @Mapping(target = "reservedQuantity", constant = "0")
     Stock toEntity(StockCreateRequest dto);
 
@@ -33,12 +33,4 @@ public interface StockMapper {
     @Mapping(target = "belowMinimum", expression = "java(stock.isBelowMinimum())")
     @Mapping(target = "unitOfMeasure", source = "product.unitOfMeasure")
     StockResponse toResponse(Stock stock);
-
-    default Product mapProduct(Long productId) {
-        if (productId == null) return null;
-
-        return Product.builder()
-                .id(productId)
-                .build();
-    }
 }
