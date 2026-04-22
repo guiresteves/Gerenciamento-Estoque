@@ -3,6 +3,7 @@ package com.br.stockpro.service;
 import com.br.stockpro.dtos.stock.StockCreateRequest;
 import com.br.stockpro.dtos.stock.StockResponse;
 import com.br.stockpro.dtos.stock.StockUpdateRequest;
+import com.br.stockpro.enums.MovementType;
 import com.br.stockpro.exceptions.BusinessException;
 import com.br.stockpro.exceptions.NotFoundException;
 import com.br.stockpro.mapper.StockMapper;
@@ -27,6 +28,7 @@ public class StockService {
     private final StockRepository stockRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final ProductRepository productRepository;
+    private final StockMovementService stockMovementService;
 
 
     @Transactional
@@ -36,6 +38,10 @@ public class StockService {
 
         Product product = productRepository.findByIdAndCompanyId(request.productId(), company.getId())
                 .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+        if (!Boolean.TRUE.equals(product.getActive())) {
+            throw new BusinessException("Não é possível criar estoque para um produto inativo");
+        }
 
         if (stockRepository.existsByProductIdAndCompanyId(product.getId(), company.getId())) {
             throw new BusinessException("Já existe estoque cadastrado para este produto");
@@ -49,6 +55,18 @@ public class StockService {
         validateReservedQuantity(stock);
 
         Stock savedStock = stockRepository.save(stock);
+
+        if (savedStock.getQuantity() > 0) {
+            stockMovementService.registerStockMovement(
+                    savedStock,
+                    authenticatedUserService.getCurrentUser(),
+                    MovementType.ENTRADA,
+                    savedStock.getQuantity(),
+                    0,
+                    "Estoque inicial"
+            );
+        }
+
         return stockMapper.toResponse(savedStock);
     }
 
@@ -141,14 +159,25 @@ public class StockService {
             throw new BusinessException("A quantidade de entrada deve ser maior que zero");
         }
 
+        User currentUser = authenticatedUserService.getCurrentUser();
         Stock stock = getStockByProductId(productId);
 
+        Integer previousQuantity = stock.getQuantity();
         stock.setQuantity(stock.getQuantity() + quantity);
+
         validateStockData(stock);
         validateReservedQuantity(stock);
 
-        Stock updated = stockRepository.save(stock);
-        return stockMapper.toResponse(updated);
+        stockRepository.save(stock);
+
+        stockMovementService.registerStockMovement(
+                stock, currentUser,
+                MovementType.ENTRADA,
+                quantity, previousQuantity,
+                "Entrada manual de estoque"
+        );
+
+        return stockMapper.toResponse(stock);
     }
 
     @Transactional
@@ -157,18 +186,29 @@ public class StockService {
             throw new BusinessException("A quantidade de saída deve ser maior que zero");
         }
 
+        User currentUser = authenticatedUserService.getCurrentUser();
         Stock stock = getStockByProductId(productId);
 
         if (stock.getAvailableQuantity() < quantity) {
             throw new BusinessException("Estoque disponível insuficiente para a saída");
         }
 
+        Integer previousQuantity = stock.getQuantity();
         stock.setQuantity(stock.getQuantity() - quantity);
+
         validateStockData(stock);
         validateReservedQuantity(stock);
 
-        Stock updated = stockRepository.save(stock);
-        return stockMapper.toResponse(updated);
+        stockRepository.save(stock);
+
+        stockMovementService.registerStockMovement(
+                stock, currentUser,
+                MovementType.SAIDA,
+                quantity, previousQuantity,
+                "Saída manual de estoque"
+        );
+
+        return stockMapper.toResponse(stock);
     }
 
     @Transactional
@@ -177,18 +217,36 @@ public class StockService {
             throw new BusinessException("A nova quantidade não pode ser negativa");
         }
 
+        User currentUser = authenticatedUserService.getCurrentUser();
         Stock stock = getStockByProductId(productId);
 
         if (newQuantity < stock.getReservedQuantity()) {
             throw new BusinessException("A nova quantidade não pode ser menor que a quantidade reservada");
         }
 
+        Integer previousQuantity = stock.getQuantity();
+        Integer diff = newQuantity - previousQuantity;
+
         stock.setQuantity(newQuantity);
         validateStockData(stock);
         validateReservedQuantity(stock);
 
-        Stock updated = stockRepository.save(stock);
-        return stockMapper.toResponse(updated);
+        stockRepository.save(stock);
+
+        if (diff != 0) {
+            MovementType type = diff > 0
+                    ? MovementType.AJUSTE_POSITIVO
+                    : MovementType.AJUSTE_NEGATIVO;
+
+            stockMovementService.registerStockMovement(
+                    stock, currentUser,
+                    type,
+                    Math.abs(diff), previousQuantity,
+                    "Ajuste manual de estoque"
+            );
+        }
+
+        return stockMapper.toResponse(stock);
     }
 
     @Transactional
@@ -197,17 +255,27 @@ public class StockService {
             throw new BusinessException("A quantidade para reserva deve ser maior que zero");
         }
 
+        User currentUser = authenticatedUserService.getCurrentUser();
         Stock stock = getStockByProductId(productId);
 
         if (stock.getAvailableQuantity() < quantity) {
             throw new BusinessException("Estoque disponível insuficiente para reserva");
         }
 
+        Integer previousQuantity = stock.getQuantity();
         stock.setReservedQuantity(stock.getReservedQuantity() + quantity);
         validateReservedQuantity(stock);
 
-        Stock updated = stockRepository.save(stock);
-        return stockMapper.toResponse(updated);
+        stockRepository.save(stock);
+
+        stockMovementService.registerStockMovement(
+                stock, currentUser,
+                MovementType.RESERVA,
+                quantity, previousQuantity,
+                "Reserva de estoque"
+        );
+
+        return stockMapper.toResponse(stock);
     }
 
     @Transactional
@@ -216,23 +284,33 @@ public class StockService {
             throw new BusinessException("A quantidade para liberação deve ser maior que zero");
         }
 
+        User currentUser = authenticatedUserService.getCurrentUser();
         Stock stock = getStockByProductId(productId);
 
         if (stock.getReservedQuantity() < quantity) {
             throw new BusinessException("A quantidade a liberar é maior que a quantidade reservada");
         }
 
+
+        Integer previousQuantity = stock.getQuantity();
         stock.setReservedQuantity(stock.getReservedQuantity() - quantity);
         validateReservedQuantity(stock);
 
-        Stock updated = stockRepository.save(stock);
-        return stockMapper.toResponse(updated);
+        stockRepository.save(stock);
+
+        stockMovementService.registerStockMovement(
+                stock, currentUser,
+                MovementType.LIBERACAO,
+                quantity, previousQuantity,
+                "Liberação de reserva"
+        );
+
+        return stockMapper.toResponse(stock);
     }
 
 
     private Company getAuthenticatedCompany() {
         User currentUser = authenticatedUserService.getCurrentUser();
-
         if (currentUser.getCompany() == null) {
             throw new BusinessException("Usuário não possui empresa vinculada");
         }
@@ -242,7 +320,6 @@ public class StockService {
 
     private Stock getStockByProductId(Long productId) {
         Company company = getAuthenticatedCompany();
-
         return stockRepository.findByProductIdAndCompanyIdAndActiveTrue(productId, company.getId())
                 .orElseThrow(() -> new NotFoundException("Estoque não encontrado para o produto informado"));
     }
@@ -251,11 +328,9 @@ public class StockService {
         if (stock.getQuantity() == null || stock.getQuantity() < 0) {
             throw new BusinessException("A quantidade em estoque não pode ser negativa");
         }
-
         if (stock.getReservedQuantity() == null || stock.getReservedQuantity() < 0) {
             throw new BusinessException("A quantidade reservada não pode ser negativa");
         }
-
         if (stock.getMinQuantity() == null || stock.getMinQuantity() < 0) {
             throw new BusinessException("A quantidade mínima não pode ser negativa");
         }
