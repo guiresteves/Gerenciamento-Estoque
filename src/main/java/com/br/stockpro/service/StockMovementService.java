@@ -95,7 +95,9 @@ public class StockMovementService {
     public StockMovementResponse registerManualMovement(StockMovementManualRequest request){
 
         User currentUser = authenticatedUserService.getCurrentUser();
-        Company company = getCompany(currentUser);
+        Company company = getCurrentUserCompany();
+
+        validateManualMovementType(request.movementType());
 
         Stock stock = stockRepository.findByProductIdAndCompanyIdAndActiveTrue(request.productId(), company.getId())
                 .orElseThrow(() -> new NotFoundException("Estoque não encontrado para o produto informado"));
@@ -103,8 +105,6 @@ public class StockMovementService {
         Integer previousQuantity = stock.getQuantity();
 
         applyMovement(stock, request.movementType(), request.quantity());
-
-        validateManualMovementType(request.movementType());
 
         stockRepository.save(stock);
 
@@ -130,7 +130,7 @@ public class StockMovementService {
 
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> findByCompany(Pageable pageable) {
-        Company company = getCompany(authenticatedUserService.getCurrentUser());
+        Company company = getCurrentUserCompany();
         return stockMovementRepository
                 .findByCompanyIdOrderByCreatedAtDesc(company.getId(), pageable)
                 .map(stockRepositoryMapper::toResponse);
@@ -138,7 +138,7 @@ public class StockMovementService {
 
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> findByProduct(Long productId, Pageable pageable) {
-        Company company = getCompany(authenticatedUserService.getCurrentUser());
+        Company company = getCurrentUserCompany();
         return stockMovementRepository
                 .findByProductIdAndCompanyIdOrderByCreatedAtDesc(productId, company.getId(), pageable)
                 .map(stockRepositoryMapper::toResponse);
@@ -146,7 +146,7 @@ public class StockMovementService {
 
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> findByStock(Long stockId, Pageable pageable) {
-        Company company = getCompany(authenticatedUserService.getCurrentUser());
+        Company company = getCurrentUserCompany();
         return stockMovementRepository
                 .findByStockIdAndCompanyIdOrderByCreatedAtDesc(stockId, company.getId(), pageable)
                 .map(stockRepositoryMapper::toResponse);
@@ -154,7 +154,7 @@ public class StockMovementService {
 
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> findByType(MovementType type, Pageable pageable) {
-        Company company = getCompany(authenticatedUserService.getCurrentUser());
+        Company company = getCurrentUserCompany();
         return stockMovementRepository
                 .findByCompanyIdAndMovementTypeOrderByCreatedAtDesc(company.getId(), type, pageable)
                 .map(stockRepositoryMapper::toResponse);
@@ -165,7 +165,7 @@ public class StockMovementService {
         if (start.isAfter(end)) {
             throw new BusinessException("A data inicial não pode ser maior que a data final");
         }
-        Company company = getCompany(authenticatedUserService.getCurrentUser());
+        Company company = getCurrentUserCompany();
         return stockMovementRepository
                 .findByCompanyIdAndPeriod(company.getId(), start, end, pageable)
                 .map(stockRepositoryMapper::toResponse);
@@ -196,16 +196,16 @@ public class StockMovementService {
     }
 
     private void validateManualMovementType(MovementType type) {
-        // RESERVA e LIBERACAO têm endpoints próprios no StockService
         if (type == MovementType.RESERVA || type == MovementType.LIBERACAO || type == MovementType.SAIDA) {
             throw new BusinessException("Este tipo de movimento não pode ser registrado manualmente");
         }
     }
 
-    private Company getCompany(User user) {
-        if (user.getCompany() == null) {
+    private Company getCurrentUserCompany() {
+        User currentUser = authenticatedUserService.getCurrentUser();
+        if (currentUser.getCompany() == null) {
             throw new BusinessException("Usuário não possui empresa vinculada");
         }
-        return user.getCompany();
+        return currentUser.getCompany();
     }
 }
