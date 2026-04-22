@@ -16,7 +16,11 @@ import java.time.Instant;
 @Table(
         name = "stock_movements",
         indexes = {
-
+                @Index(name = "idx_movement_company", columnList = "company_id"),
+                @Index(name = "idx_movement_product", columnList = "product_id"),
+                @Index(name = "idx_movement_stock", columnList = "stock_id"),
+                @Index(name = "idx_movement_created_at", columnList = "created_at"),
+                @Index(name = "idx_movement_type", columnList = "movement_type")
         }
 )
 public class StockMovement {
