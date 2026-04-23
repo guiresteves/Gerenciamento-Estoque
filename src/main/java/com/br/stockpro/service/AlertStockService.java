@@ -66,7 +66,7 @@ public class AlertStockService {
         if (stock.getQuantity() > 0) return;
 
         // verifica há quantos dias está zerado
-        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndStatus(
+        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE)
                 .ifPresent(alert -> {
@@ -93,7 +93,7 @@ public class AlertStockService {
     public Page<AlertStockResponse> findByStatus(AlertStatus status, Pageable pageable) {
         Company company = getCurrentUserCompany();
         return alertStockRepository
-                .findByCompanyIdAndStatusOrderByCreatedAtDesc(company.getId(), status, pageable)
+                .findByCompanyIdAndAlertStatusOrderByCreatedAtDesc(company.getId(), status, pageable)
                 .map(alertSotckMapper::toResponse);
     }
 
@@ -111,15 +111,15 @@ public class AlertStockService {
         Long companyId = company.getId();
 
         long totalActive = alertStockRepository
-                .countByCompanyIdAndStatus(companyId, AlertStatus.ACTIVE);
+                .countByCompanyIdAndAlertStatus(companyId, AlertStatus.ACTIVE);
         long lowStock = alertStockRepository
-                .countByCompanyIdAndAlertTypeAndStatus(companyId, AlertType.LOW_STOCK, AlertStatus.ACTIVE);
+                .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.LOW_STOCK, AlertStatus.ACTIVE);
         long outOfStock = alertStockRepository
-                .countByCompanyIdAndAlertTypeAndStatus(companyId, AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE);
+                .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE);
         long longOutOfStock = alertStockRepository
-                .countByCompanyIdAndAlertTypeAndStatus(companyId, AlertType.LONG_OUT_OF_STOCK, AlertStatus.ACTIVE);
+                .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.LONG_OUT_OF_STOCK, AlertStatus.ACTIVE);
         long aboveMaximum = alertStockRepository
-                .countByCompanyIdAndAlertTypeAndStatus(companyId, AlertType.ABOVE_MAXIMUM, AlertStatus.ACTIVE);
+                .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.ABOVE_MAXIMUM, AlertStatus.ACTIVE);
 
         return new StockAlertSummaryResponse(totalActive, lowStock, outOfStock, longOutOfStock, aboveMaximum);
     }
@@ -148,7 +148,7 @@ public class AlertStockService {
 
     private void handleAboveMaximumAlert(Stock stock, Company company, Product product) {
         boolean alreadyExists = alertStockRepository
-                .existsByProductIdAndCompanyIdAndAlertTypeAndStatus(
+                .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.ABOVE_MAXIMUM, AlertStatus.ACTIVE);
 
@@ -159,7 +159,7 @@ public class AlertStockService {
 
     private void handleLowStockAlert(Stock stock, Company company, Product product) {
         boolean alreadyExists = alertStockRepository
-                .existsByProductIdAndCompanyIdAndAlertTypeAndStatus(
+                .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.LOW_STOCK, AlertStatus.ACTIVE);
 
@@ -173,7 +173,7 @@ public class AlertStockService {
         resolveAlertIfExists(product.getId(), company.getId(), AlertType.LOW_STOCK);
 
         boolean alreadyExists = alertStockRepository
-                .existsByProductIdAndCompanyIdAndAlertTypeAndStatus(
+                .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE);
 
@@ -208,7 +208,7 @@ public class AlertStockService {
     }
 
     private void resolveAlertIfExists(Long productId, Long companyId, AlertType type) {
-        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndStatus(
+        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         productId, companyId, type, AlertStatus.ACTIVE)
                 .ifPresent(alert -> {
                     alert.setAlertStatus(AlertStatus.RESOLVED);
@@ -219,7 +219,7 @@ public class AlertStockService {
 
     private void resolveAllActiveAlerts(Long productId, Long companyId) {
         List<AlertStock> activeAlerts = alertStockRepository
-                .findByProductIdAndCompanyIdAndStatus(
+                .findByProductIdAndCompanyIdAndAlertStatus(
                         productId, companyId, AlertStatus.ACTIVE);
 
         activeAlerts.forEach(alert -> {

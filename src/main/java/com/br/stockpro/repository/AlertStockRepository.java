@@ -14,27 +14,27 @@ public interface AlertStockRepository extends JpaRepository<AlertStock, Long> {
 
     Page<AlertStock> findByCompanyIdOrderByCreatedAtDesc(Long companyId, Pageable pageable);
 
-    Page<AlertStock> findByCompanyIdAndStatusOrderByCreatedAtDesc(
-            Long companyId, AlertStatus status, Pageable pageable);
+    Page<AlertStock> findByCompanyIdAndAlertStatusOrderByCreatedAtDesc(
+            Long companyId, AlertStatus alertStatus, Pageable pageable);
 
     Page<AlertStock> findByCompanyIdAndAlertTypeOrderByCreatedAtDesc(
-            Long companyId, AlertType type, Pageable pageable);
+            Long companyId, AlertType alertType, Pageable pageable);
 
     // verifica se já existe alerta ativo para evitar duplicatas
-    boolean existsByProductIdAndCompanyIdAndAlertTypeAndStatus(
-            Long productId, Long companyId, AlertType type, AlertStatus status);
+    boolean existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
+            Long productId, Long companyId, AlertType alertType, AlertStatus alertStatus);
 
     // busca alerta ativo específico para resolver automaticamente
-    Optional<AlertStock> findByProductIdAndCompanyIdAndAlertTypeAndStatus(
-            Long productId, Long companyId, AlertType type, AlertStatus status);
+    Optional<AlertStock> findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
+            Long productId, Long companyId, AlertType alertType, AlertStatus alertStatus);
 
     // contagens para o summary
-    long countByCompanyIdAndStatus(Long companyId, AlertStatus status);
+    long countByCompanyIdAndAlertStatus(Long companyId, AlertStatus alertStatus);
 
-    long countByCompanyIdAndAlertTypeAndStatus(
-            Long companyId, AlertType type, AlertStatus status);
+    long countByCompanyIdAndAlertTypeAndAlertStatus(
+            Long companyId, AlertType alertType, AlertStatus alertStatus);
 
     // alertas ativos de um produto específico
-    List<AlertStock> findByProductIdAndCompanyIdAndStatus(
-            Long productId, Long companyId, AlertStatus status);
+    List<AlertStock> findByProductIdAndCompanyIdAndAlertStatus(
+            Long productId, Long companyId, AlertStatus alertStatus);
 }

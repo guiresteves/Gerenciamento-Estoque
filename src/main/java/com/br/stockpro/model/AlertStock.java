@@ -19,7 +19,7 @@ import java.time.Instant;
         indexes = {
                 @Index(name = "idx_alert_company", columnList = "company_id"),
                 @Index(name = "idx_alert_product", columnList = "product_id"),
-                @Index(name = "idx_alert_status", columnList = "status"),
+                @Index(name = "idx_alert_status", columnList = "alert_status"),
                 @Index(name = "idx_alert_type", columnList = "alert_type"),
                 @Index(name = "idx_alert_created_at", columnList = "created_at")
         }
@@ -47,7 +47,7 @@ public class AlertStock {
     private AlertType alertType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 15)
+    @Column(name = "alert_status", nullable = false, length = 15)
     private AlertStatus alertStatus;
 
     @Column(name = "quantity_at_alert", nullable = false)
