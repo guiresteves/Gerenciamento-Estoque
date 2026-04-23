@@ -42,6 +42,7 @@ public class EmailService {
             case LOW_STOCK -> "[StockPro] Estoque baixo: " + productName;
             case OUT_OF_STOCK -> "[StockPro] Produto zerado: " + productName;
             case LONG_OUT_OF_STOCK -> "[StockPro] Produto zerado há vários dias: " + productName;
+            case ABOVE_MAXIMUM -> "[StockPro] Estoque acima do máximo: " + productName;
         };
     }
 
@@ -79,6 +80,16 @@ public class EmailService {
                     Este produto está sem estoque há 7 dias ou mais.
                     Verifique se ainda faz parte do seu catálogo.
                     """.formatted(product.getName(), product.getBarcode());
+            case ABOVE_MAXIMUM -> """
+                    Estoque acima do máximo definido
+                    
+                    Produto: %s
+                    Código de barras: %s
+                    Quantidade atual: %d
+                    Quantidade máxima: %d
+                    
+                    Verifique se há excesso de compras para este produto.
+                    """.formatted(product.getName(), product.getBarcode(), quantity, minQuantity);
         };
     }
 }

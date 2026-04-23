@@ -3,7 +3,8 @@ package com.br.stockpro.enums;
 public enum AlertType {
     LOW_STOCK("Alerta abaixo do estoque"),
     OUT_OF_STOCK("Alerta para estoque zerado"),
-    LONG_OUT_OF_STOCK("Alerta para estoque zerado há mais de X dias");
+    LONG_OUT_OF_STOCK("Alerta para estoque zerado há mais de X dias"),
+    ABOVE_MAXIMUM("Alerta acima do estoque");
 
     private final String description;
 

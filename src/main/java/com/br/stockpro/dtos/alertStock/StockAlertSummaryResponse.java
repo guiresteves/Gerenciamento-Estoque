@@ -4,6 +4,7 @@ public record StockAlertSummaryResponse(
         long totalActive,
         long lowStock,
         long outOfStock,
-        long longOutOfStock
+        long longOutOfStock,
+        long aboveMaximum
 ) {
 }
