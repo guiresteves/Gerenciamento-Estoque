@@ -31,6 +31,9 @@ public interface StockMapper {
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "availableQuantity", expression = "java(stock.getAvailableQuantity())")
     @Mapping(target = "belowMinimum", expression = "java(stock.isBelowMinimum())")
+    @Mapping(target = "aboveMaximum", expression = "java(stock.isAboveMaximum())")
     @Mapping(target = "unitOfMeasure", source = "product.unitOfMeasure")
+    @Mapping(target = "minStock", source = "product.minStock")       // novo
+    @Mapping(target = "maxStock", source = "product.maxStock")
     StockResponse toResponse(Stock stock);
 }

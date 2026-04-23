@@ -18,11 +18,13 @@ public record StockResponse(
         Integer reservedQuantity,
         Integer availableQuantity,
 
-        Integer minQuantity,
+        Integer minStock,
+        Integer maxStock,
+        Boolean aboveMaximum,
+        Boolean belowMinimum,
 
         String location,
         Boolean active,
-        Boolean belowMinimum,
 
         Instant createdAt,
         Instant updatedAt

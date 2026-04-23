@@ -331,9 +331,6 @@ public class StockService {
         if (stock.getReservedQuantity() == null || stock.getReservedQuantity() < 0) {
             throw new BusinessException("A quantidade reservada não pode ser negativa");
         }
-        if (stock.getMinQuantity() == null || stock.getMinQuantity() < 0) {
-            throw new BusinessException("A quantidade mínima não pode ser negativa");
-        }
     }
 
     private void validateReservedQuantity(Stock stock) {

@@ -45,10 +45,6 @@ public class Stock extends Auditable {
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity = 0;
 
-    @Builder.Default
-    @Column(name = "min_quantity", nullable = false)
-    private Integer minQuantity = 0;
-
     @Column(length = 100)
     private String location;
 
@@ -60,7 +56,6 @@ public class Stock extends Auditable {
     protected void prePersist() {
         if (quantity == null) quantity = 0;
         if (reservedQuantity == null) reservedQuantity = 0;
-        if (minQuantity == null) minQuantity = 0;
         if (active == null) active = true;
     }
 
@@ -76,6 +71,12 @@ public class Stock extends Auditable {
     }
 
     public boolean isBelowMinimum() {
-        return quantity < minQuantity;
+        return product.getMinStock() != null
+                && quantity < product.getMinStock();
+    }
+
+    public boolean isAboveMaximum() {
+        return product.getMaxStock() != null
+                && quantity > product.getMaxStock();
     }
 }
