@@ -1,8 +1,10 @@
 package com.br.stockpro.model;
 
+import com.br.stockpro.enums.BatchStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
@@ -45,4 +47,41 @@ public class ProductBatch extends Auditable {
 
     @Column(name = "remaining_quantity", nullable = false)
     private Integer remainingQuantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    private BatchStatus status;
+
+    @Column(name = "days_to_expiration")
+    private Integer daysToExpiration;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    @Override
+    protected void prePersist() {
+        if (status == null) status = BatchStatus.ACTIVE;
+        if (remainingQuantity == null) remainingQuantity = quantity;
+        if (active == null) active = true;
+        updateDaysToExpiration();
+    }
+
+    @Override
+    protected void preUpdate() {
+        updateDaysToExpiration();
+    }
+
+    public void updateDaysToExpiration() {
+        this.daysToExpiration = (int) java.time.temporal.ChronoUnit.DAYS
+                .between(LocalDate.now(), expirationDate);
+    }
+
+    public boolean isExpired() {
+        return LocalDate.now().isAfter(expirationDate);
+    }
+
+    public boolean isExpiring(int days) {
+        return !isExpired() && daysToExpiration <= days;
+    }
 }
