@@ -49,4 +49,12 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
              AND (s.quantity - s.reservedQuantity) > 0
            """)
     List<Stock> findAvailableStockByCompanyId(Long companyId);
+
+
+    @Query(""" 
+            SELECT s 
+            FROM Stock s 
+            WHERE s.active = true
+            """)
+    List<Stock> findAllActiveStocks();
 }

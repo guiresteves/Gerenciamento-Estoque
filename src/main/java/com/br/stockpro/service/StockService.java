@@ -29,6 +29,7 @@ public class StockService {
     private final AuthenticatedUserService authenticatedUserService;
     private final ProductRepository productRepository;
     private final StockMovementService stockMovementService;
+    private final StockAlertService alertStockService;
 
 
     @Transactional
@@ -177,6 +178,8 @@ public class StockService {
                 "Entrada manual de estoque"
         );
 
+        alertStockService.checkAndGenerateAlerts(stock);
+
         return stockMapper.toResponse(stock);
     }
 
@@ -207,6 +210,8 @@ public class StockService {
                 quantity, previousQuantity,
                 "Saída manual de estoque"
         );
+
+        alertStockService.checkAndGenerateAlerts(stock);
 
         return stockMapper.toResponse(stock);
     }
@@ -246,6 +251,8 @@ public class StockService {
             );
         }
 
+        alertStockService.checkAndGenerateAlerts(stock);
+
         return stockMapper.toResponse(stock);
     }
 
@@ -274,6 +281,8 @@ public class StockService {
                 quantity, previousQuantity,
                 "Reserva de estoque"
         );
+
+        alertStockService.checkAndGenerateAlerts(stock);
 
         return stockMapper.toResponse(stock);
     }
@@ -304,6 +313,8 @@ public class StockService {
                 quantity, previousQuantity,
                 "Liberação de reserva"
         );
+
+        alertStockService.checkAndGenerateAlerts(stock);
 
         return stockMapper.toResponse(stock);
     }
