@@ -29,7 +29,7 @@ public class StockService {
     private final AuthenticatedUserService authenticatedUserService;
     private final ProductRepository productRepository;
     private final StockMovementService stockMovementService;
-    private final AlertStockService alertStockService;
+    private final StockAlertService alertStockService;
 
 
     @Transactional

@@ -15,7 +15,7 @@ import java.util.List;
 public class StockAlertScheduler {
 
     private final StockRepository stockRepository;
-    private final AlertStockService stockAlertService;
+    private final StockAlertService stockAlertService;
 
     // roda todo dia às 8h — verifica todos os estoques
     @Scheduled(cron = "0 0 8 * * *")
