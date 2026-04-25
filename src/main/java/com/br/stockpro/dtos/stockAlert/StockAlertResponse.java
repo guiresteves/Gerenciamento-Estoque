@@ -1,10 +1,10 @@
-package com.br.stockpro.dtos.alertStock;
+package com.br.stockpro.dtos.stockAlert;
 
 import com.br.stockpro.enums.*;
 
 import java.time.Instant;
 
-public record AlertStockResponse(
+public record StockAlertResponse(
         Long id,
         Long companyId,
         Long productId,

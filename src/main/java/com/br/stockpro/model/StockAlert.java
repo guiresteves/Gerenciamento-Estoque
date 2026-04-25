@@ -24,7 +24,7 @@ import java.time.Instant;
                 @Index(name = "idx_alert_created_at", columnList = "created_at")
         }
 )
-public class AlertStock {
+public class StockAlert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

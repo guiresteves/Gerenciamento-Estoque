@@ -1,14 +1,14 @@
 package com.br.stockpro.service;
 
-import com.br.stockpro.dtos.alertStock.AlertStockResponse;
-import com.br.stockpro.dtos.alertStock.StockAlertSummaryResponse;
+import com.br.stockpro.dtos.stockAlert.StockAlertResponse;
+import com.br.stockpro.dtos.stockAlert.StockAlertSummaryResponse;
 import com.br.stockpro.enums.AlertStatus;
 import com.br.stockpro.enums.AlertType;
 import com.br.stockpro.exceptions.BusinessException;
 import com.br.stockpro.exceptions.NotFoundException;
-import com.br.stockpro.mapper.AlertSotckMapper;
+import com.br.stockpro.mapper.SotckAlertMapper;
 import com.br.stockpro.model.*;
-import com.br.stockpro.repository.AlertStockRepository;
+import com.br.stockpro.repository.StockAlertRepository;
 import com.br.stockpro.repository.StockRepository;
 import com.br.stockpro.security.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,10 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AlertStockService {
+public class StockAlertService {
 
-    private final AlertStockRepository alertStockRepository;
-    private final AlertSotckMapper alertSotckMapper;
+    private final StockAlertRepository stockAlertRepository;
+    private final SotckAlertMapper sotckAlertMapper;
     private final StockRepository stockRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final EmailService emailService;
@@ -66,7 +66,7 @@ public class AlertStockService {
         if (stock.getQuantity() > 0) return;
 
         // verifica há quantos dias está zerado
-        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
+        stockAlertRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE)
                 .ifPresent(alert -> {
@@ -82,27 +82,27 @@ public class AlertStockService {
     // consultas
 
     @Transactional(readOnly = true)
-    public Page<AlertStockResponse> findAll(Pageable pageable) {
+    public Page<StockAlertResponse> findAll(Pageable pageable) {
         Company company = getCurrentUserCompany();
-        return alertStockRepository
+        return stockAlertRepository
                 .findByCompanyIdOrderByCreatedAtDesc(company.getId(), pageable)
-                .map(alertSotckMapper::toResponse);
+                .map(sotckAlertMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public Page<AlertStockResponse> findByStatus(AlertStatus status, Pageable pageable) {
+    public Page<StockAlertResponse> findByStatus(AlertStatus status, Pageable pageable) {
         Company company = getCurrentUserCompany();
-        return alertStockRepository
+        return stockAlertRepository
                 .findByCompanyIdAndAlertStatusOrderByCreatedAtDesc(company.getId(), status, pageable)
-                .map(alertSotckMapper::toResponse);
+                .map(sotckAlertMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public Page<AlertStockResponse> findByType(AlertType type, Pageable pageable) {
+    public Page<StockAlertResponse> findByType(AlertType type, Pageable pageable) {
         Company company = getCurrentUserCompany();
-        return alertStockRepository
+        return stockAlertRepository
                 .findByCompanyIdAndAlertTypeOrderByCreatedAtDesc(company.getId(), type, pageable)
-                .map(alertSotckMapper::toResponse);
+                .map(sotckAlertMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -110,15 +110,15 @@ public class AlertStockService {
         Company company = getCurrentUserCompany();
         Long companyId = company.getId();
 
-        long totalActive = alertStockRepository
+        long totalActive = stockAlertRepository
                 .countByCompanyIdAndAlertStatus(companyId, AlertStatus.ACTIVE);
-        long lowStock = alertStockRepository
+        long lowStock = stockAlertRepository
                 .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.LOW_STOCK, AlertStatus.ACTIVE);
-        long outOfStock = alertStockRepository
+        long outOfStock = stockAlertRepository
                 .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE);
-        long longOutOfStock = alertStockRepository
+        long longOutOfStock = stockAlertRepository
                 .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.LONG_OUT_OF_STOCK, AlertStatus.ACTIVE);
-        long aboveMaximum = alertStockRepository
+        long aboveMaximum = stockAlertRepository
                 .countByCompanyIdAndAlertTypeAndAlertStatus(companyId, AlertType.ABOVE_MAXIMUM, AlertStatus.ACTIVE);
 
         return new StockAlertSummaryResponse(totalActive, lowStock, outOfStock, longOutOfStock, aboveMaximum);
@@ -126,28 +126,28 @@ public class AlertStockService {
 
     // operador reconhece o alerta
     @Transactional
-    public AlertStockResponse acknowledge(Long alertId) {
+    public StockAlertResponse acknowledge(Long alertId) {
         Company company = getCurrentUserCompany();
 
-        AlertStock alert = alertStockRepository.findById(alertId)
+        StockAlert stockAlert = stockAlertRepository.findById(alertId)
                 .filter(a -> a.getCompany().getId().equals(company.getId()))
                 .orElseThrow(() -> new NotFoundException("Alerta não encontrado"));
 
-        if (alert.getAlertStatus() != AlertStatus.ACTIVE) {
+        if (stockAlert.getAlertStatus() != AlertStatus.ACTIVE) {
             throw new BusinessException("Apenas alertas ativos podem ser reconhecidos");
         }
 
-        alert.setAlertStatus(AlertStatus.ACKNOWLEDGED);
-        alert.setAcknowledgedAt(Instant.now());
+        stockAlert.setAlertStatus(AlertStatus.ACKNOWLEDGED);
+        stockAlert.setAcknowledgedAt(Instant.now());
 
-        return alertSotckMapper.toResponse(alertStockRepository.save(alert));
+        return sotckAlertMapper.toResponse(stockAlertRepository.save(stockAlert));
     }
 
     // métodos privados
 
 
     private void handleAboveMaximumAlert(Stock stock, Company company, Product product) {
-        boolean alreadyExists = alertStockRepository
+        boolean alreadyExists = stockAlertRepository
                 .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.ABOVE_MAXIMUM, AlertStatus.ACTIVE);
@@ -158,7 +158,7 @@ public class AlertStockService {
     }
 
     private void handleLowStockAlert(Stock stock, Company company, Product product) {
-        boolean alreadyExists = alertStockRepository
+        boolean alreadyExists = stockAlertRepository
                 .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.LOW_STOCK, AlertStatus.ACTIVE);
@@ -172,7 +172,7 @@ public class AlertStockService {
         // resolve LOW_STOCK se existir — produto zerado é mais grave
         resolveAlertIfExists(product.getId(), company.getId(), AlertType.LOW_STOCK);
 
-        boolean alreadyExists = alertStockRepository
+        boolean alreadyExists = stockAlertRepository
                 .existsByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         product.getId(), company.getId(),
                         AlertType.OUT_OF_STOCK, AlertStatus.ACTIVE);
@@ -185,7 +185,7 @@ public class AlertStockService {
     private void generateAlert(Stock stock, Company company,
                                Product product, AlertType type, Integer daysOutOfStock) {
 
-        AlertStock alert = AlertStock.builder()
+        StockAlert stockAlert = StockAlert.builder()
                 .company(company)
                 .product(product)
                 .stock(stock)
@@ -197,7 +197,7 @@ public class AlertStockService {
                 .daysOutOfStock(daysOutOfStock)
                 .build();
 
-        alertStockRepository.save(alert);
+        stockAlertRepository.save(stockAlert);
 
         log.info("Alerta gerado — tipo: {}, produto: {}, empresa: {}",
                 type, product.getName(), company.getId());
@@ -208,26 +208,26 @@ public class AlertStockService {
     }
 
     private void resolveAlertIfExists(Long productId, Long companyId, AlertType type) {
-        alertStockRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
+        stockAlertRepository.findByProductIdAndCompanyIdAndAlertTypeAndAlertStatus(
                         productId, companyId, type, AlertStatus.ACTIVE)
-                .ifPresent(alert -> {
-                    alert.setAlertStatus(AlertStatus.RESOLVED);
-                    alert.setResolvedAt(Instant.now());
-                    alertStockRepository.save(alert);
+                .ifPresent(stockAlert -> {
+                    stockAlert.setAlertStatus(AlertStatus.RESOLVED);
+                    stockAlert.setResolvedAt(Instant.now());
+                    stockAlertRepository.save(stockAlert);
                 });
     }
 
     private void resolveAllActiveAlerts(Long productId, Long companyId) {
-        List<AlertStock> activeAlerts = alertStockRepository
+        List<StockAlert> activeAlerts = stockAlertRepository
                 .findByProductIdAndCompanyIdAndAlertStatus(
                         productId, companyId, AlertStatus.ACTIVE);
 
-        activeAlerts.forEach(alert -> {
-            alert.setAlertStatus(AlertStatus.RESOLVED);
-            alert.setResolvedAt(Instant.now());
+        activeAlerts.forEach(stockAlert -> {
+            stockAlert.setAlertStatus(AlertStatus.RESOLVED);
+            stockAlert.setResolvedAt(Instant.now());
         });
 
-        alertStockRepository.saveAll(activeAlerts);
+        stockAlertRepository.saveAll(activeAlerts);
     }
 
     private Company getCurrentUserCompany() {

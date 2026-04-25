@@ -1,4 +1,4 @@
-package com.br.stockpro.dtos.alertStock;
+package com.br.stockpro.dtos.stockAlert;
 
 public record StockAlertSummaryResponse(
         long totalActive,
