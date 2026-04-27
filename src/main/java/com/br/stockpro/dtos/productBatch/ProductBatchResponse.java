@@ -15,7 +15,7 @@ public record ProductBatchResponse(
         String productBarCode,
 
         Long stockId,
-        Long stockMovimentId,
+        Long stockMovementId,
 
         String bachCode,
         LocalDate expirationDate,
@@ -29,5 +29,6 @@ public record ProductBatchResponse(
 
         Instant createdAt,
         Instant updatedAt
+
 ) {
 }

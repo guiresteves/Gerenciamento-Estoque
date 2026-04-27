@@ -20,5 +20,6 @@ public record ProductBatchCreateRequest (
         @NotNull(message = "A quantidade é obrigatória")
         @Min(value = 1, message = "A quantidade deve ser maior que zero")
         Integer quantity
+
 ) {
 }
