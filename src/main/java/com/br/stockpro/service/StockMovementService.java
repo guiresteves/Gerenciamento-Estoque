@@ -51,7 +51,9 @@ public class StockMovementService {
                 .company(stock.getCompany())
                 .performedBy(performedBy)
                 .movementType(type)
-                .movementOrigin(MovementOrigin.SYSTEM)
+                .movementOrigin(performedBy != null
+                        ? MovementOrigin.SYSTEM
+                        : MovementOrigin.SYSTEM)
                 .quantity(quantity)
                 .previousQuantity(previousQuantity)
                 .currentQuantity(stock.getQuantity())
@@ -124,6 +126,31 @@ public class StockMovementService {
         StockMovement saved = stockMovementRepository.save(movement);
         return stockRepositoryMapper.toResponse(saved);
 
+    }
+
+    @Transactional
+    public StockMovement registerStockMovementAndReturn(
+            Stock stock,
+            User performedBy,
+            MovementType type,
+            Integer quantity,
+            Integer previousQuantity,
+            String reason
+    ) {
+        StockMovement movement = StockMovement.builder()
+                .stock(stock)
+                .product(stock.getProduct())
+                .company(stock.getCompany())
+                .performedBy(performedBy)
+                .movementType(type)
+                .movementOrigin(MovementOrigin.SYSTEM)
+                .quantity(quantity)
+                .previousQuantity(previousQuantity)
+                .currentQuantity(stock.getQuantity())
+                .reason(reason)
+                .build();
+
+        return stockMovementRepository.save(movement);
     }
 
     // Consultas
