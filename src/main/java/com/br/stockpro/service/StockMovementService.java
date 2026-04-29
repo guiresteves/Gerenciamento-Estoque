@@ -126,6 +126,31 @@ public class StockMovementService {
 
     }
 
+    @Transactional
+    public StockMovement registerStockMovementAndReturn(
+            Stock stock,
+            User performedBy,
+            MovementType type,
+            Integer quantity,
+            Integer previousQuantity,
+            String reason
+    ) {
+        StockMovement movement = StockMovement.builder()
+                .stock(stock)
+                .product(stock.getProduct())
+                .company(stock.getCompany())
+                .performedBy(performedBy)
+                .movementType(type)
+                .movementOrigin(MovementOrigin.SYSTEM)
+                .quantity(quantity)
+                .previousQuantity(previousQuantity)
+                .currentQuantity(stock.getQuantity())
+                .reason(reason)
+                .build();
+
+        return stockMovementRepository.save(movement);
+    }
+
     // Consultas
 
     @Transactional(readOnly = true)
