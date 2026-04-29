@@ -51,7 +51,9 @@ public class StockMovementService {
                 .company(stock.getCompany())
                 .performedBy(performedBy)
                 .movementType(type)
-                .movementOrigin(MovementOrigin.SYSTEM)
+                .movementOrigin(performedBy != null
+                        ? MovementOrigin.SYSTEM
+                        : MovementOrigin.SYSTEM)
                 .quantity(quantity)
                 .previousQuantity(previousQuantity)
                 .currentQuantity(stock.getQuantity())

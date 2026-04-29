@@ -41,8 +41,8 @@ public class StockMovement {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "performed_by_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "performed_by_id")
     private User performedBy;
 
     @Enumerated(EnumType.STRING)
