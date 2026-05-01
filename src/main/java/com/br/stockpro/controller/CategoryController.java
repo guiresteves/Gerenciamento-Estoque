@@ -3,6 +3,8 @@ package com.br.stockpro.controller;
 import com.br.stockpro.dtos.category.CategoryCreateRequest;
 import com.br.stockpro.dtos.category.CategoryResponse;
 import com.br.stockpro.dtos.category.CategoryUpdateRequest;
+import com.br.stockpro.security.anotations.CanViewStock;
+import com.br.stockpro.security.anotations.IsAdminOrManager;
 import com.br.stockpro.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @IsAdminOrManager
     public ResponseEntity<CategoryResponse> createCategory(
             @RequestBody @Valid CategoryCreateRequest request
     ) {
@@ -28,17 +31,20 @@ public class CategoryController {
     }
 
     @GetMapping
+    @CanViewStock
     public ResponseEntity<List<CategoryResponse>> findAllCategories(
             @RequestParam(required = false) Boolean active) {
         return ResponseEntity.ok(categoryService.findAllCategories(active));
     }
 
     @GetMapping("/{id}")
+    @CanViewStock
     public ResponseEntity<CategoryResponse> findCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findCategoryById(id));
     }
 
     @PatchMapping("/{id}")
+    @IsAdminOrManager
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable Long id,
             @RequestBody @Valid CategoryUpdateRequest request) {
@@ -46,11 +52,13 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}/activate")
+    @IsAdminOrManager
     public ResponseEntity<CategoryResponse> activateCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.activate(id));
     }
 
     @PatchMapping("/{id}/deactivate")
+    @IsAdminOrManager
     public ResponseEntity<CategoryResponse> deactivateCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.deactivate(id));
     }
