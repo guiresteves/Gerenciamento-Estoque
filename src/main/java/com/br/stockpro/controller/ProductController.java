@@ -3,6 +3,8 @@ package com.br.stockpro.controller;
 import com.br.stockpro.dtos.product.ProductCreateRequest;
 import com.br.stockpro.dtos.product.ProductResponse;
 import com.br.stockpro.dtos.product.ProductUpdateRequest;
+import com.br.stockpro.security.anotations.CanViewStock;
+import com.br.stockpro.security.anotations.IsAdminOrManager;
 import com.br.stockpro.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +22,14 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
+    @IsAdminOrManager
     public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductCreateRequest request) {
         ProductResponse response = productService.createProduct(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping("/{id}")
+    @IsAdminOrManager
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable Long id,
             @RequestBody @Valid ProductUpdateRequest request
@@ -34,6 +38,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @CanViewStock
     public ResponseEntity<List<ProductResponse>> findAllProducts(
             @RequestParam(required = false) Boolean active
     ) {
@@ -41,21 +46,25 @@ public class ProductController {
     }
 
     @GetMapping("/barcode/{barcode}")
+    @CanViewStock
     public ResponseEntity<ProductResponse> findByBarcode(@PathVariable String barcode) {
         return ResponseEntity.ok(productService.findByBarcode(barcode));
     }
 
     @GetMapping("/{id}")
+    @CanViewStock
     public ResponseEntity<ProductResponse> findProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findProductById(id));
     }
 
     @PatchMapping("/{id}/activate")
+    @IsAdminOrManager
     public ResponseEntity<ProductResponse> activateProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.activate(id));
     }
 
     @PatchMapping("/{id}/deactivate")
+    @IsAdminOrManager
     public ResponseEntity<ProductResponse> deactivateProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.deactivate(id));
     }

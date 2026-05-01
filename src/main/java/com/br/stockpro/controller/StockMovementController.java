@@ -3,6 +3,7 @@ package com.br.stockpro.controller;
 import com.br.stockpro.dtos.stockMovement.StockMovementManualRequest;
 import com.br.stockpro.dtos.stockMovement.StockMovementResponse;
 import com.br.stockpro.enums.MovementType;
+import com.br.stockpro.security.anotations.*;
 import com.br.stockpro.service.StockMovementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,14 @@ public class StockMovementController {
     private final StockMovementService stockMovementService;
 
     @PostMapping("/manual")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<StockMovementResponse> registerManual(@RequestBody @Valid StockMovementManualRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(stockMovementService.registerManualMovement(request));
     }
 
     @GetMapping
+    @IsAdminOrManager
     public ResponseEntity<Page<StockMovementResponse>> findAll(
             @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
     ) {
@@ -37,6 +40,7 @@ public class StockMovementController {
     }
 
     @GetMapping("/product/{productId}")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<Page<StockMovementResponse>> findByProduct(
             @PathVariable Long productId,
             @PageableDefault(size = 20) Pageable pageable
@@ -45,6 +49,7 @@ public class StockMovementController {
     }
 
     @GetMapping("/stock/{stockId}")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<Page<StockMovementResponse>> findByStock(
             @PathVariable Long stockId,
             @PageableDefault(size = 20) Pageable pageable
@@ -53,6 +58,7 @@ public class StockMovementController {
     }
 
     @GetMapping("/type/{type}")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<Page<StockMovementResponse>> findByType(
             @PathVariable MovementType type,
             @PageableDefault(size = 20) Pageable pageable
@@ -61,6 +67,7 @@ public class StockMovementController {
     }
 
     @GetMapping("/period")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<Page<StockMovementResponse>> findByPeriod(
             @RequestParam Instant start,
             @RequestParam Instant end,
@@ -70,6 +77,7 @@ public class StockMovementController {
     }
 
     @GetMapping("/reference")
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<List<StockMovementResponse>> findByReference(
             @RequestParam Long referenceId,
             @RequestParam String referenceType

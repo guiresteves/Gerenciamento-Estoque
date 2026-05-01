@@ -4,6 +4,7 @@ import com.br.stockpro.dtos.user.ChangePasswordRequest;
 import com.br.stockpro.dtos.user.UserCrreateRequest;
 import com.br.stockpro.dtos.user.UserResponse;
 import com.br.stockpro.dtos.user.UserUpdateRequest;
+import com.br.stockpro.security.anotations.*;
 import com.br.stockpro.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @IsAdmin
     public ResponseEntity<UserResponse> createUser(
             @RequestBody @Valid UserCrreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -28,17 +30,20 @@ public class UserController {
     }
 
     @GetMapping
+    @IsAdminOrManager
     public ResponseEntity<List<UserResponse>> findAllUsers(
             @RequestParam(required = false) Boolean active) {
         return ResponseEntity.ok(userService.findAllUsers(active));
     }
 
     @GetMapping("/{id}")
+    @IsAdminOrManager
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @PatchMapping("/{id}")
+    @IsAdmin
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
             @RequestBody @Valid UserUpdateRequest request) {
@@ -46,6 +51,7 @@ public class UserController {
     }
 
     @PatchMapping("/me/change-password")
+    @IsAdminOrManager
     public ResponseEntity<Void> changePassword(
             @RequestBody @Valid ChangePasswordRequest request) {
         userService.changePassword(request);
@@ -53,11 +59,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/activate")
+    @IsAdmin
     public ResponseEntity<UserResponse> activate(@PathVariable Long id) {
         return ResponseEntity.ok(userService.activate(id));
     }
 
     @PatchMapping("/{id}/deactivate")
+    @IsAdmin
     public ResponseEntity<UserResponse> deactivate(@PathVariable Long id) {
         return ResponseEntity.ok(userService.deactivate(id));
     }

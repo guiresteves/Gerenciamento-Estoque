@@ -4,6 +4,7 @@ import com.br.stockpro.dtos.productBatch.BatchAlertResponse;
 import com.br.stockpro.dtos.productBatch.ProductBatchCreateRequest;
 import com.br.stockpro.dtos.productBatch.ProductBatchResponse;
 import com.br.stockpro.enums.BatchStatus;
+import com.br.stockpro.security.anotations.*;
 import com.br.stockpro.service.ProductBatchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ProductBatchController {
     private final ProductBatchService productBatchService;
 
     @PostMapping
+    @IsAdminOrManagerOrStocker
     public ResponseEntity<ProductBatchResponse> createBatch(
             @RequestBody @Valid ProductBatchCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -31,17 +33,20 @@ public class ProductBatchController {
     }
 
     @GetMapping
+    @CanViewStock
     public ResponseEntity<Page<ProductBatchResponse>> findAll(
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(productBatchService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
+    @CanViewStock
     public ResponseEntity<ProductBatchResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productBatchService.findById(id));
     }
 
     @GetMapping("/product/{productId}")
+    @CanViewStock
     public ResponseEntity<Page<ProductBatchResponse>> findByProduct(
             @PathVariable Long productId,
             @PageableDefault(size = 20) Pageable pageable) {
@@ -49,6 +54,7 @@ public class ProductBatchController {
     }
 
     @GetMapping("/status/{status}")
+    @CanViewStock
     public ResponseEntity<Page<ProductBatchResponse>> findByStatus(
             @PathVariable BatchStatus status,
             @PageableDefault(size = 20) Pageable pageable) {
@@ -56,6 +62,7 @@ public class ProductBatchController {
     }
 
     @GetMapping("/expiring")
+    @CanViewStock
     public ResponseEntity<List<BatchAlertResponse>> findExpiring() {
         return ResponseEntity.ok(productBatchService.findExpiring());
     }
