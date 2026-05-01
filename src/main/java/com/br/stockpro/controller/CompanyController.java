@@ -3,6 +3,8 @@ package com.br.stockpro.controller;
 import com.br.stockpro.dtos.company.CompanyCreateRequest;
 import com.br.stockpro.dtos.company.CompanyResponse;
 import com.br.stockpro.dtos.company.CompanyUpdateRequest;
+import com.br.stockpro.security.anotations.CanViewStock;
+import com.br.stockpro.security.anotations.IsAdmin;
 import com.br.stockpro.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping
+    @IsAdmin
     public ResponseEntity<CompanyResponse> createCompany(
             @RequestBody @Valid CompanyCreateRequest request
     ) {
@@ -27,11 +30,13 @@ public class CompanyController {
     }
 
     @GetMapping("/me")
+    @CanViewStock
     public ResponseEntity<CompanyResponse> getMyCompany() {
         return ResponseEntity.ok(companyService.getCompany());
     }
 
     @PatchMapping("/me")
+    @IsAdmin
     public ResponseEntity<CompanyResponse> updateMyCompany(
             @RequestBody @Valid CompanyUpdateRequest request
     ) {
