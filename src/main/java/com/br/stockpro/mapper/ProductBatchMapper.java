@@ -10,11 +10,11 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductBatchMapper {
 
-    @Mapping(target = "companyId", source = "company.Id")
-    @Mapping(target = "productId", source = "product.Id")
+    @Mapping(target = "companyId", source = "company.id")
+    @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "productBarCode", source = "product.barcode")
-    @Mapping(target = "stockId", source = "stock.Id")
+    @Mapping(target = "stockId", source = "stock.id")
     @Mapping(target = "stockMovementId", source = "stockMovement.id")
     ProductBatchResponse toResponse(ProductBatch productBatch);
 
