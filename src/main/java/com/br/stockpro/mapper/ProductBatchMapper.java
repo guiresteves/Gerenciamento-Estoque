@@ -13,7 +13,7 @@ public interface ProductBatchMapper {
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "productName", source = "product.name")
-    @Mapping(target = "productBarCode", source = "product.barcode")
+    @Mapping(target = "productBarcode", source = "product.barcode")
     @Mapping(target = "stockId", source = "stock.id")
     @Mapping(target = "stockMovementId", source = "stockMovement.id")
     ProductBatchResponse toResponse(ProductBatch productBatch);

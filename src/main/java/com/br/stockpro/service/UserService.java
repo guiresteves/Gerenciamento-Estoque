@@ -1,7 +1,7 @@
 package com.br.stockpro.service;
 
 import com.br.stockpro.dtos.user.ChangePasswordRequest;
-import com.br.stockpro.dtos.user.UserCrreateRequest;
+import com.br.stockpro.dtos.user.UserCreateRequest;
 import com.br.stockpro.dtos.user.UserResponse;
 import com.br.stockpro.dtos.user.UserUpdateRequest;
 import com.br.stockpro.exceptions.BusinessException;
@@ -28,7 +28,7 @@ public class UserService {
     private final AuthenticatedUserService authenticatedUserService;
 
     @Transactional
-    public UserResponse createUser(UserCrreateRequest request) {
+    public UserResponse createUser(UserCreateRequest request) {
 
         Company company = getCurrentUserCompany();
 

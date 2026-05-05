@@ -1,8 +1,7 @@
 package com.br.stockpro.mapper;
 
-import com.br.stockpro.dtos.auth.AuthResponse;
 import com.br.stockpro.dtos.auth.RegisterRequest;
-import com.br.stockpro.dtos.user.UserCrreateRequest;
+import com.br.stockpro.dtos.user.UserCreateRequest;
 import com.br.stockpro.dtos.user.UserResponse;
 import com.br.stockpro.dtos.user.UserUpdateRequest;
 import com.br.stockpro.model.User;
@@ -22,7 +21,7 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "company", ignore = true)
-    User toEntity(UserCrreateRequest dto);
+    User toEntity(UserCreateRequest dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
