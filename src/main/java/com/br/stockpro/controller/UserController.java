@@ -1,7 +1,7 @@
 package com.br.stockpro.controller;
 
 import com.br.stockpro.dtos.user.ChangePasswordRequest;
-import com.br.stockpro.dtos.user.UserCrreateRequest;
+import com.br.stockpro.dtos.user.UserCreateRequest;
 import com.br.stockpro.dtos.user.UserResponse;
 import com.br.stockpro.dtos.user.UserUpdateRequest;
 import com.br.stockpro.exceptions.ErrorResponse;
@@ -52,7 +52,7 @@ public class UserController {
     @PostMapping
     @IsAdmin
     public ResponseEntity<UserResponse> createUser(
-            @RequestBody @Valid UserCrreateRequest request) {
+            @RequestBody @Valid UserCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(request));
     }
