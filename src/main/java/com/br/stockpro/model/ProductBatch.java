@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-@Table
+@Table(name = "product_batches")
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductBatch extends Auditable {
@@ -36,10 +36,10 @@ public class ProductBatch extends Auditable {
     @JoinColumn(name = "stock_movement_id")
     private StockMovement stockMovement;
 
-    @Column(name = "bath_code", nullable = false)
+    @Column(name = "batch_code", nullable = false) // corrigido
     private String batchCode;
 
-    @Column(name = "expiation_date", nullable = false)
+    @Column(name = "expiration_date", nullable = false) // corrigido
     private LocalDate expirationDate;
 
     @Column(nullable = false)

@@ -53,10 +53,10 @@ public class StockAlert {
     @Column(name = "quantity_at_alert", nullable = false)
     private Integer quantityAtAlert;
 
-    @Column(name = "min_quantity_at_alert", nullable = false)
+    @Column(name = "min_stock_at_alert", nullable = false)
     private Integer minStockAtAlert;
 
-    @Column(name = "max_quantity_at_alert", nullable = false)
+    @Column(name = "max_stock_at_alert", nullable = false)
     private Integer maxStockAtAlert;
 
     @Column(name = "days_out_of_stock")
