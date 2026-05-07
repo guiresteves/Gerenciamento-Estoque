@@ -1,40 +1,33 @@
 package com.br.stockpro.validation.validator;
 
-import com.br.stockpro.validation.annotation.ValidCNPJ;
+import com.br.stockpro.validation.annotation.ValidCPF;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class CpfValidator implements ConstraintValidator<ValidCNPJ, String> {
-
-    private static final int[] WEIGHTS_FIRST  = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
-    private static final int[] WEIGHTS_SECOND = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+public class CpfValidator implements ConstraintValidator<ValidCPF, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isBlank()) return true;
 
-        String cnpj = value.replaceAll("\\D", "");
+        String cpf = value.replaceAll("\\D", "");
 
-        if (cnpj.length() != 14) return false;
-        if (hasAllSameDigits(cnpj))  return false;
+        if (cpf.length() != 11) return false;
+        if (cpf.chars().distinct().count() == 1) return false;
 
-        int first  = calcDigit(cnpj, WEIGHTS_FIRST);
-        int second = calcDigit(cnpj, WEIGHTS_SECOND);
+        int firstDigit = calcDigit(cpf, 10);
+        int secondDigit = calcDigit(cpf, 11);
 
-        return cnpj.charAt(12) - '0' == first
-                && cnpj.charAt(13) - '0' == second;
+        return cpf.charAt(9) - '0' == firstDigit
+                && cpf.charAt(10) - '0' == secondDigit;
     }
 
-    private int calcDigit(String cnpj, int[] weights) {
+    private int calcDigit(String cpf, int weightStart) {
         int sum = 0;
-        for (int i = 0; i < weights.length; i++) {
-            sum += (cnpj.charAt(i) - '0') * weights[i];
+        for (int i = 0; i < weightStart - 1; i++) {
+            sum += (cpf.charAt(i) - '0') * (weightStart - i);
         }
         int remainder = sum % 11;
         return remainder < 2 ? 0 : 11 - remainder;
-    }
-
-    private boolean hasAllSameDigits(String cnpj) {
-        return cnpj.chars().distinct().count() == 1;
     }
 }

@@ -11,14 +11,12 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "company", ignore = true)
     User toEntity(RegisterRequest dto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "company", ignore = true)
     User toEntity(UserCreateRequest dto);
