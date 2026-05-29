@@ -3,7 +3,6 @@ package com.br.stockpro.mapper;
 import com.br.stockpro.dtos.product.ProductCreateRequest;
 import com.br.stockpro.dtos.product.ProductResponse;
 import com.br.stockpro.dtos.product.ProductUpdateRequest;
-import com.br.stockpro.model.Category;
 import com.br.stockpro.model.Product;
 import org.mapstruct.*;
 

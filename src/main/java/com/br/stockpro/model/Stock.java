@@ -3,8 +3,6 @@ package com.br.stockpro.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Entity
 @Setter
 @Getter

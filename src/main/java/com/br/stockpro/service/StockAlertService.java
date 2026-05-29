@@ -9,7 +9,6 @@ import com.br.stockpro.exceptions.NotFoundException;
 import com.br.stockpro.mapper.SotckAlertMapper;
 import com.br.stockpro.model.*;
 import com.br.stockpro.repository.StockAlertRepository;
-import com.br.stockpro.repository.StockRepository;
 import com.br.stockpro.security.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class StockAlertService {
 
     private final StockAlertRepository stockAlertRepository;
     private final SotckAlertMapper sotckAlertMapper;
-    private final StockRepository stockRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final EmailService emailService;
 

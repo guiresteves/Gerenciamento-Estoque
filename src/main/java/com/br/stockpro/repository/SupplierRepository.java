@@ -1,6 +1,5 @@
 package com.br.stockpro.repository;
 
-import com.br.stockpro.model.Company;
 import com.br.stockpro.model.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 

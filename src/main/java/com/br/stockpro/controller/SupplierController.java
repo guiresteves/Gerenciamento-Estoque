@@ -4,8 +4,6 @@ import com.br.stockpro.dtos.supplier.SupplierCreateRequest;
 import com.br.stockpro.dtos.supplier.SupplierResponse;
 import com.br.stockpro.dtos.supplier.SupplierUpdateRequest;
 import com.br.stockpro.exceptions.ErrorResponse;
-import com.br.stockpro.repository.SupplierRepository;
-import com.br.stockpro.security.anotations.CanViewStock;
 import com.br.stockpro.security.anotations.IsAdmin;
 import com.br.stockpro.security.anotations.IsAdminOrManager;
 import com.br.stockpro.service.SupplierService;
