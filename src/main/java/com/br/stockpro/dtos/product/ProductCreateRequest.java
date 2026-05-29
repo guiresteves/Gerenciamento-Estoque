@@ -4,7 +4,6 @@ import com.br.stockpro.enums.UnitOfMeasure;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
-import javax.crypto.spec.DESedeKeySpec;
 import java.math.BigDecimal;
 
 @Schema(description = "Dados para a criação de um novo produto")

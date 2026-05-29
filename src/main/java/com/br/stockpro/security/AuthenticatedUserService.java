@@ -1,9 +1,7 @@
 package com.br.stockpro.security;
 
 import com.br.stockpro.exceptions.BusinessException;
-import com.br.stockpro.exceptions.NotFoundException;
 import com.br.stockpro.model.User;
-import com.br.stockpro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticatedUserService {
-
-    private final UserRepository userRepository;
 
     public User getCurrentUser() {
 

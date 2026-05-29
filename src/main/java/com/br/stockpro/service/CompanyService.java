@@ -69,13 +69,15 @@ public class CompanyService {
     }
 
     private Company getCurrentUserCompany() {
+
         User currentUser = authenticatedUserService.getCurrentUser();
 
-        if (currentUser.getCompany() == null) {
+        Company company = currentUser.getCompany();
+
+        if (company == null) {
             throw new NotFoundException("Usuário não possui empresa vinculada");
         }
 
-        return companyRepository.findById(currentUser.getCompany().getId())
-                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
+        return company;
     }
 }

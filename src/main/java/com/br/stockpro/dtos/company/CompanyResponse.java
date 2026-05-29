@@ -4,7 +4,6 @@ import com.br.stockpro.enums.CompanyType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
-import java.util.Locale;
 
 @Schema(description = "Dados da empresa retornado pela API")
 public record CompanyResponse(

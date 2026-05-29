@@ -4,7 +4,6 @@ import com.br.stockpro.enums.BatchStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity

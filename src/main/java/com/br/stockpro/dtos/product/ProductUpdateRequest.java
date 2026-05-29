@@ -1,7 +1,6 @@
 package com.br.stockpro.dtos.product;
 
 import com.br.stockpro.enums.UnitOfMeasure;
-import io.swagger.v3.oas.annotations.media.DependentSchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 

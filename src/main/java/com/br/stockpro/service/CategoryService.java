@@ -10,7 +10,6 @@ import com.br.stockpro.model.Category;
 import com.br.stockpro.model.Company;
 import com.br.stockpro.model.User;
 import com.br.stockpro.repository.CategoryRepository;
-import com.br.stockpro.repository.UserRepository;
 import com.br.stockpro.security.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
